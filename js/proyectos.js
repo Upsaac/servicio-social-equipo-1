@@ -1,12 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  
-  // Botón Crear Proyecto
-  const btnCrear = document.getElementById('btnCrear');
-  if(btnCrear) {
-    btnCrear.addEventListener('click', () => {
-      alert("Abriendo formulario para nuevo proyecto...");
-    });
-  }
 
   // Lógica simple para limpiar filtros
   const btnLimpiar = document.getElementById('btnLimpiar');

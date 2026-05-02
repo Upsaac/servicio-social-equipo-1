@@ -21,6 +21,14 @@ if (currentUser) {
   if (avatarEl) avatarEl.textContent = currentUser.initials;
 }
 
+
+/* ─── Oculta "Nuevo proyecto" si no es admin ── */
+const btnNuevo = document.getElementById('btnNuevoProyecto');
+if (btnNuevo) {
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  if (!isAdmin) btnNuevo.style.display = 'none';
+}
+
 /* ─── Cerrar sesión ──────────────────────── */
 const logoutBtn = document.querySelector('.sb-logout');
 if (logoutBtn) {
