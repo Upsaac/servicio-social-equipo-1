@@ -1,191 +1,241 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Huella Solidaria - Calendario</title>
   <link rel="stylesheet" href="css/calendario.css">
 </head>
+
 <body>
 
-<div class="dash">
-  <div class="sidebar">
-    <div class="sb-brand">
-      <div class="sb-logo">
-        <div class="sb-logo-grid">
-          <span style="background:#1D9E75;border-radius:2px 2px 2px 0;"></span>
-          <span style="background:#fff;border-radius:2px 2px 0 2px;opacity:0.9;"></span>
-          <span style="background:#D85A30;border-radius:2px 0 2px 2px;"></span>
-          <span style="background:#7F77DD;border-radius:0 2px 2px 2px;"></span>
+  <div class="dash">
+    <div class="sidebar">
+      <div class="sb-brand">
+        <div class="sb-logo">
+          <div class="sb-logo-grid">
+            <span style="background:#1D9E75;border-radius:2px 2px 2px 0;"></span>
+            <span style="background:#fff;border-radius:2px 2px 0 2px;opacity:0.9;"></span>
+            <span style="background:#D85A30;border-radius:2px 0 2px 2px;"></span>
+            <span style="background:#7F77DD;border-radius:0 2px 2px 2px;"></span>
+          </div>
+        </div>
+        <div class="sb-name">Impacto<br>Solidario</div>
+      </div>
+      <div class="sb-divider"></div>
+      <nav class="sb-nav">
+        <a href="dashboard.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 11h1v6a1 1 0 001 1h4v-4h2v4h4a1 1 0 001-1v-6h1a1 1 0 00.707-1.707l-7-7z" />
+          </svg>
+          Inicio
+        </a>
+        <a href="proyectos.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+          </svg>
+          Proyectos
+        </a>
+        <a href="analisis.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+          </svg>
+          Análisis
+        </a>
+        <a href="lideres.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-.82-2.47A6 6 0 0118 18h-2zM4.82 14.53A4 4 0 004 17v1H2a6 6 0 012.82-5.47z" />
+          </svg>
+          Nuestros Líderes
+        </a>
+        <a href="calendario.html" class="sb-item active">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM4 8h12v8H4V8z" />
+          </svg>
+          Calendario
+        </a>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-avatar">MG</div>
+          <div>
+            <div class="sb-uname">María González</div>
+            <div class="sb-urole">Administrador</div>
+          </div>
         </div>
       </div>
-      <div class="sb-name">Impacto<br>Solidario</div>
     </div>
-    <div class="sb-divider"></div>
-    <nav class="sb-nav">
-      <a href="dashboard.html" class="sb-item">
-        <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 11h1v6a1 1 0 001 1h4v-4h2v4h4a1 1 0 001-1v-6h1a1 1 0 00.707-1.707l-7-7z"/></svg>
-        Inicio
-      </a>
-      <a href="proyectos.html" class="sb-item">
-        <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
-        Proyectos
-      </a>
-      <a href="analisis.html" class="sb-item">
-        <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
-        Análisis
-      </a>
-      <a href="lideres.html" class="sb-item">
-        <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-.82-2.47A6 6 0 0118 18h-2zM4.82 14.53A4 4 0 004 17v1H2a6 6 0 012.82-5.47z"/></svg>
-        Nuestros Líderes
-      </a>
-      <a href="calendario.html" class="sb-item active">
-        <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM4 8h12v8H4V8z"/></svg>
-        Calendario
-      </a>
-    </nav>
-    <div class="sb-footer">
-      <div class="sb-user">
-        <div class="sb-avatar">MG</div>
-        <div>
-          <div class="sb-uname">María González</div>
-          <div class="sb-urole">Administrador</div>
+
+    <div class="main">
+
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2>Calendario Global de Actividades</h2>
         </div>
+        <div class="topbar-right">
+          <div class="search-box">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"
+              style="color:#888780;flex-shrink:0;margin-right:8px;">
+              <path fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd" />
+            </svg>
+            Buscar proyectos, líderes, lugares...
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <div class="calendar-layout">
+
+          <div class="cal-left-panel">
+            <h3 class="panel-title">Filtros</h3>
+
+            <div class="filter-group">
+              <h4 class="filter-subtitle">Categoría de Proyecto</h4>
+              <label class="check-label"><input type="checkbox" checked> Educación</label>
+              <label class="check-label"><input type="checkbox" checked> Salud</label>
+              <label class="check-label"><input type="checkbox" checked> Medio Ambiente</label>
+            </div>
+
+            <div class="filter-group">
+              <h4 class="filter-subtitle">Líder a Cargo</h4>
+              <select class="filter-dropdown full-width">
+                <option>Todos los Líderes</option>
+                <option>Juan Pérez</option>
+                <option>María García</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cal-center-panel">
+            <div class="cal-tabs-container">
+              <div class="cal-tabs">
+                <button class="cal-tab active">Mes</button>
+                <button class="cal-tab">Semana</button>
+                <button class="cal-tab">Lista</button>
+              </div>
+              <h3 class="panel-title">Cuadrícula del Calendario</h3>
+            </div>
+
+            <div class="calendar-grid-container">
+              <div class="cal-header-row">
+                <div>Dom</div>
+                <div>Lun</div>
+                <div>Mar</div>
+                <div>Mié</div>
+                <div>Jue</div>
+                <div>Vie</div>
+                <div>Sáb</div>
+              </div>
+              <div class="cal-days-grid">
+                <div class="cal-cell">28</div>
+                <div class="cal-cell">29</div>
+                <div class="cal-cell">30</div>
+                <div class="cal-cell">31</div>
+                <div class="cal-cell">
+                  1
+                  <div class="event-chip event-blue" data-id="1">Evento A<br>(Educación)</div>
+                </div>
+                <div class="cal-cell">2</div>
+                <div class="cal-cell">3</div>
+
+                <div class="cal-cell">4</div>
+                <div class="cal-cell">
+                  5
+                  <div class="event-chip event-green" data-id="2">Evento B<br>(Medio Ambiente)</div>
+                </div>
+                <div class="cal-cell">6</div>
+                <div class="cal-cell">7</div>
+                <div class="cal-cell">8</div>
+                <div class="cal-cell">9</div>
+                <div class="cal-cell">
+                  10
+                  <div class="event-chip event-red" data-id="3">Evento C<br>(Salud)</div>
+                </div>
+
+                <div class="cal-cell">11</div>
+                <div class="cal-cell">12</div>
+                <div class="cal-cell">13</div>
+                <div class="cal-cell">14</div>
+                <div class="cal-cell">15</div>
+                <div class="cal-cell">16</div>
+                <div class="cal-cell">17</div>
+
+                <div class="cal-cell">18</div>
+                <div class="cal-cell">19</div>
+                <div class="cal-cell">20</div>
+                <div class="cal-cell">21</div>
+                <div class="cal-cell">22</div>
+                <div class="cal-cell">23</div>
+                <div class="cal-cell">24</div>
+
+                <div class="cal-cell">25</div>
+                <div class="cal-cell">26</div>
+                <div class="cal-cell">27</div>
+                <div class="cal-cell">28</div>
+                <div class="cal-cell">29</div>
+                <div class="cal-cell">30</div>
+                <div class="cal-cell">1</div>
+
+                <div class="cal-cell inactive">2</div>
+                <div class="cal-cell inactive">3</div>
+                <div class="cal-cell inactive">4</div>
+                <div class="cal-cell inactive">5</div>
+                <div class="cal-cell inactive">6</div>
+                <div class="cal-cell inactive">7</div>
+                <div class="cal-cell inactive">8</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cal-right-panel">
+            <h3 class="panel-title">Próximos Hitos</h3>
+
+            <div class="milestones-list">
+              <div class="milestone-item">
+                <h4>Entrega de Reporte Proyecto X</h4>
+                <p>15 Oct, 2024</p>
+              </div>
+              <div class="milestone-item">
+                <h4>Sesión de Capacitación de Voluntarios</h4>
+                <p>20 Oct, 2024</p>
+              </div>
+              <div class="milestone-item">
+                <h4>Límite de Solicitud de Recursos</h4>
+                <p>1 Nov, 2024</p>
+              </div>
+              <div class="milestone-item">
+                <h4>Evento de Alcance Comunitario</h4>
+                <p>10 Nov, 2024</p>
+              </div>
+              <div class="milestone-item">
+                <h4>Reunión de Revisión Anual</h4>
+                <p>25 Nov, 2024</p>
+              </div>
+            </div>
+
+            <div class="event-details-card" id="eventDetails">
+              <h4 id="detName">Nombre del Evento: Taller Comunitario</h4>
+              <p id="detProj">Proyecto Asociado: Proyecto Alfa</p>
+              <p id="detLead">Líder a Cargo: Jane Doe</p>
+              <p id="detImpact">Impacto Esperado: 50 niños asistentes</p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
   </div>
 
-  <div class="main">
-    
-    <div class="topbar">
-      <div class="topbar-left">
-        <h2>Calendario Global de Actividades</h2>
-      </div>
-      <div class="topbar-right">
-        <div class="search-box">
-          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" style="color:#888780;flex-shrink:0;margin-right:8px;"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-          Buscar proyectos, líderes, lugares...
-        </div>
-        <button class="btn-new" id="btnCrear">+ Crear Nuevo Proyecto</button>
-      </div>
-    </div>
-
-    <div class="content">
-      
-      <div class="calendar-layout">
-        
-        <div class="cal-left-panel">
-          <h3 class="panel-title">Filtros</h3>
-          
-          <div class="filter-group">
-            <h4 class="filter-subtitle">Categoría de Proyecto</h4>
-            <label class="check-label"><input type="checkbox" checked> Educación</label>
-            <label class="check-label"><input type="checkbox" checked> Salud</label>
-            <label class="check-label"><input type="checkbox" checked> Medio Ambiente</label>
-          </div>
-
-          <div class="filter-group">
-            <h4 class="filter-subtitle">Líder a Cargo</h4>
-            <select class="filter-dropdown full-width">
-              <option>Todos los Líderes</option>
-              <option>Juan Pérez</option>
-              <option>María García</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="cal-center-panel">
-          <div class="cal-tabs-container">
-            <div class="cal-tabs">
-              <button class="cal-tab active">Mes</button>
-              <button class="cal-tab">Semana</button>
-              <button class="cal-tab">Lista</button>
-            </div>
-            <h3 class="panel-title">Cuadrícula del Calendario</h3>
-          </div>
-
-          <div class="calendar-grid-container">
-            <div class="cal-header-row">
-              <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
-            </div>
-            <div class="cal-days-grid">
-              <div class="cal-cell">28</div>
-              <div class="cal-cell">29</div>
-              <div class="cal-cell">30</div>
-              <div class="cal-cell">31</div>
-              <div class="cal-cell">
-                1
-                <div class="event-chip event-blue" data-id="1">Evento A<br>(Educación)</div>
-              </div>
-              <div class="cal-cell">2</div>
-              <div class="cal-cell">3</div>
-              
-              <div class="cal-cell">4</div>
-              <div class="cal-cell">
-                5
-                <div class="event-chip event-green" data-id="2">Evento B<br>(Medio Ambiente)</div>
-              </div>
-              <div class="cal-cell">6</div>
-              <div class="cal-cell">7</div>
-              <div class="cal-cell">8</div>
-              <div class="cal-cell">9</div>
-              <div class="cal-cell">
-                10
-                <div class="event-chip event-red" data-id="3">Evento C<br>(Salud)</div>
-              </div>
-
-              <div class="cal-cell">11</div><div class="cal-cell">12</div><div class="cal-cell">13</div><div class="cal-cell">14</div><div class="cal-cell">15</div><div class="cal-cell">16</div><div class="cal-cell">17</div>
-              
-              <div class="cal-cell">18</div><div class="cal-cell">19</div><div class="cal-cell">20</div><div class="cal-cell">21</div><div class="cal-cell">22</div><div class="cal-cell">23</div><div class="cal-cell">24</div>
-              
-              <div class="cal-cell">25</div><div class="cal-cell">26</div><div class="cal-cell">27</div><div class="cal-cell">28</div><div class="cal-cell">29</div><div class="cal-cell">30</div><div class="cal-cell">1</div>
-              
-              <div class="cal-cell inactive">2</div><div class="cal-cell inactive">3</div><div class="cal-cell inactive">4</div><div class="cal-cell inactive">5</div>
-              <div class="cal-cell inactive">6</div><div class="cal-cell inactive">7</div><div class="cal-cell inactive">8</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="cal-right-panel">
-          <h3 class="panel-title">Próximos Hitos</h3>
-          
-          <div class="milestones-list">
-            <div class="milestone-item">
-              <h4>Entrega de Reporte Proyecto X</h4>
-              <p>15 Oct, 2024</p>
-            </div>
-            <div class="milestone-item">
-              <h4>Sesión de Capacitación de Voluntarios</h4>
-              <p>20 Oct, 2024</p>
-            </div>
-            <div class="milestone-item">
-              <h4>Límite de Solicitud de Recursos</h4>
-              <p>1 Nov, 2024</p>
-            </div>
-            <div class="milestone-item">
-              <h4>Evento de Alcance Comunitario</h4>
-              <p>10 Nov, 2024</p>
-            </div>
-            <div class="milestone-item">
-              <h4>Reunión de Revisión Anual</h4>
-              <p>25 Nov, 2024</p>
-            </div>
-          </div>
-
-          <div class="event-details-card" id="eventDetails">
-            <h4 id="detName">Nombre del Evento: Taller Comunitario</h4>
-            <p id="detProj">Proyecto Asociado: Proyecto Alfa</p>
-            <p id="detLead">Líder a Cargo: Jane Doe</p>
-            <p id="detImpact">Impacto Esperado: 50 niños asistentes</p>
-          </div>
-        </div>
-
-      </div>
-      
-    </div>
-  </div>
-</div>
-
-<script src="js/calendario.js"></script>
+  <script src="js/calendario.js"></script>
 </body>
+
 </html>
