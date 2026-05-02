@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Solidaria - Análisis</title>
+  <link rel="stylesheet" href="css/analisis.css">
+</head>
+
+<body>
+
+  <div class="dash">
+    <div class="sidebar">
+      <div class="sb-brand">
+        <div class="sb-logo">
+          <div class="sb-logo-grid">
+            <span style="background:#1D9E75;border-radius:2px 2px 2px 0;"></span>
+            <span style="background:#fff;border-radius:2px 2px 0 2px;opacity:0.9;"></span>
+            <span style="background:#D85A30;border-radius:2px 0 2px 2px;"></span>
+            <span style="background:#7F77DD;border-radius:0 2px 2px 2px;"></span>
+          </div>
+        </div>
+        <div class="sb-name">Impacto<br>Solidario</div>
+      </div>
+      <div class="sb-divider"></div>
+      <nav class="sb-nav">
+        <a href="dashboard.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 11h1v6a1 1 0 001 1h4v-4h2v4h4a1 1 0 001-1v-6h1a1 1 0 00.707-1.707l-7-7z" />
+          </svg>
+          Inicio
+        </a>
+        <a href="proyectos.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+          </svg>
+          Proyectos
+        </a>
+        <a href="analisis.html" class="sb-item active">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+          </svg>
+          Análisis
+        </a>
+        <a href="lideres.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-.82-2.47A6 6 0 0118 18h-2zM4.82 14.53A4 4 0 004 17v1H2a6 6 0 012.82-5.47z" />
+          </svg>
+          Nuestros Líderes
+        </a>
+        <a href="calendario.html" class="sb-item">
+          <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM4 8h12v8H4V8z" />
+          </svg>
+          Calendario
+        </a>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-avatar">MG</div>
+          <div>
+            <div class="sb-uname">María González</div>
+            <div class="sb-urole">Administrador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2>Dashboard global</h2>
+          <p>Vista ejecutiva general</p>
+        </div>
+        <div class="topbar-right">
+          <div class="search-box">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"
+              style="color:#888780;flex-shrink:0;margin-right:8px;">
+              <path fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd" />
+            </svg>
+            Buscar proyectos, líderes, lugares...
+          </div>
+          <button class="btn-new" id="btnCrear">+ Crear Nuevo Proyecto</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <div class="export-row-top">
+          <button class="btn-export-gray" id="btnExportar">Exportar Reporte Estandarizado (PDF/CSV)</button>
+        </div>
+
+        <div class="kpi-grid-4">
+          <div class="kpi-card-simple">
+            <p class="kpi-title">Horas de Servicio Social<br>por Beneficiario</p>
+            <h3 class="kpi-val-large">25</h3>
+            <p class="kpi-sub text-green">↑ 5% respecto al mes anterior</p>
+            <div class="kpi-icon-bottom icon-green-light">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card-simple">
+            <p class="kpi-title">Tasa Global de Retención (%)</p>
+            <h3 class="kpi-val-large">85%</h3>
+            <p class="kpi-sub text-green">↑ 2% respecto al año anterior</p>
+            <div class="kpi-icon-bottom icon-blue-light">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                <path
+                  d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-.82-2.47A6 6 0 0118 18h-2zM4.82 14.53A4 4 0 004 17v1H2a6 6 0 012.82-5.47z" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card-simple">
+            <p class="kpi-title">Total de Participantes Activos</p>
+            <h3 class="kpi-val-large">240</h3>
+            <p class="kpi-sub text-orange">→ Estable</p>
+            <div class="kpi-icon-bottom icon-yellow-light">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card-simple">
+            <p class="kpi-title">Crecimiento Interanual</p>
+            <h3 class="kpi-val-large">15%</h3>
+            <p class="kpi-sub text-green">↑ Superando expectativas</p>
+            <div class="kpi-icon-bottom icon-purple-light">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                <path fill-rule="evenodd"
+                  d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-box">
+            <h4 class="chart-title">Crecimiento de Beneficiarios (Últimos 12 Meses)</h4>
+            <div class="chart-placeholder wireframe-bg">
+              <span style="color: #bbb; font-size: 14px;">[ Gráfica de Líneas ]</span>
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <h4 class="chart-title">Asignación de Recursos vs. Impacto por Categoría</h4>
+            <div class="chart-placeholder wireframe-bg">
+              <span style="color: #bbb; font-size: 14px;">[ Gráfica de Barras ]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-row">
+          <div class="chart-box">
+            <h4 class="chart-title">Mapa de Calor de Impacto (México)</h4>
+            <div class="map-placeholder-large">
+              <span
+                style="color: #bbb; font-size: 14px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">[
+                Mapa de Calor Interactivo ]</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/analisis.js"></script>
+</body>
+
+</html>

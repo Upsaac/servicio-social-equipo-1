@@ -1,0 +1,54 @@
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f3;
+  color: #2C2C2A;
+}
+
+.welcome {
+  text-align: center;
+  padding: 3rem;
+  
+  /* Aquí le indicamos que ocupe el 70% del ancho de la pantalla */
+  width: 70vw;
+
+}
+
+.welcome h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #185FA5;
+  margin-bottom: 0.5rem;
+}
+
+.welcome p {
+  font-size: 16px;
+  color: #888780;
+  margin-bottom: 2rem;
+}
+
+.welcome a {
+  display: inline-block;
+  padding: 12px 32px;
+  background: #EF9F27;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.welcome a:hover { 
+  opacity: 0.9; 
+}

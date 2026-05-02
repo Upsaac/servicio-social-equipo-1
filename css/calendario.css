@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* --- BASE Y RESET --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { width: 100%; height: 100vh; overflow: hidden; font-family: 'DM Sans', sans-serif; background: #fff; }
+.dash { display: flex; width: 100%; height: 100%; }
+a { text-decoration: none; color: inherit; display: block; cursor: pointer; }
+
+/* --- SIDEBAR --- */
+.sidebar { width: 250px; flex-shrink: 0; background: #185FA5; display: flex; flex-direction: column; color: #fff; }
+.sb-brand { display: flex; align-items: center; gap: 10px; padding: 1.5rem 1.25rem 1.25rem; }
+.sb-logo { width: 36px; height: 36px; background: #EF9F27; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.sb-logo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 20px; height: 20px; }
+.sb-logo-grid span { display: block; border-radius: 2px; }
+.sb-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.sb-divider { height: 0.5px; background: rgba(255,255,255,0.15); margin: 0 1.25rem 1rem; }
+.sb-nav { flex: 1; padding: 0 0.75rem; }
+.sb-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7); cursor: pointer; margin-bottom: 4px; transition: background 0.15s; }
+.sb-item:hover { background: rgba(255,255,255,0.1); }
+.sb-item.active { background: rgba(255,255,255,0.18); color: #fff; }
+.sb-icon { width: 18px; height: 18px; opacity: 0.85; font-size: 16px; }
+.sb-footer { padding: 1rem 1.25rem; border-top: 0.5px solid rgba(255,255,255,0.15); }
+.sb-user { display: flex; align-items: center; gap: 10px; }
+.sb-avatar { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #EF9F27; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
+.sb-uname { font-size: 13px; font-weight: 600; line-height: 1.3; }
+.sb-urole { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+/* --- MAIN Y TOPBAR --- */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; background: #fafafa; }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; background: #fff; border-bottom: 0.5px solid #eaeaea; flex-shrink: 0; }
+.topbar-left h2 { font-size: 20px; font-weight: 700; color: #2C2C2A; }
+.topbar-right { display: flex; align-items: center; gap: 15px; }
+.search-box { background: #fff; border: 1px solid #D3D1C7; border-radius: 8px; padding: 10px 16px; font-size: 14px; color: #888780; width: 260px; }
+.btn-new { background: #EF9F27; color: #fff; font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; transition: background 0.2s; font-family: inherit;}
+.btn-new:hover { background: #d98f20; }
+
+/* --- CONTENIDO ESPECÍFICO DE CALENDARIO --- */
+.content { padding: 2rem; max-width: 1500px; margin: 0 auto; width: 100%; }
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 280px;
+  gap: 30px;
+  height: 100%;
+}
+
+.panel-title { font-size: 14px; font-weight: 700; color: #2C2C2A; margin-bottom: 20px; }
+
+/* --- PANEL IZQUIERDO (Filtros) --- */
+.cal-left-panel { display: flex; flex-direction: column; gap: 20px; }
+.filter-group { display: flex; flex-direction: column; gap: 12px; }
+.filter-subtitle { font-size: 12px; font-weight: 600; color: #2C2C2A; }
+.check-label { font-size: 13px; color: #5F5E5A; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.filter-dropdown { padding: 10px; border-radius: 6px; border: 1px solid #D3D1C7; font-size: 13px; color: #5F5E5A; background: #fff; font-family: inherit; }
+.full-width { width: 100%; }
+
+/* --- PANEL CENTRAL (Calendario) --- */
+.cal-tabs-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.cal-tabs { display: flex; gap: 5px; }
+.cal-tab { padding: 8px 16px; border: none; background: #E5E7EB; color: #5F5E5A; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;}
+.cal-tab.active { background: #D1E5F9; color: #185FA5; }
+
+.calendar-grid-container { background: #fff; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+.cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); background: #fff; border-bottom: 1px solid #eaeaea; }
+.cal-header-row div { padding: 15px 10px; text-align: center; font-size: 13px; font-weight: 600; color: #2C2C2A; }
+
+.cal-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: #eaeaea; gap: 1px; /* El gap crea las líneas del grid */ border-top: 1px solid #eaeaea;}
+.cal-cell { background: #fff; min-height: 100px; padding: 10px; font-size: 13px; color: #2C2C2A; font-weight: 500; display: flex; flex-direction: column; gap: 5px;}
+.cal-cell.inactive { background: #F9FAFB; color: #bbb; }
+
+/* Eventos dentro del calendario */
+.event-chip { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; line-height: 1.2; cursor: pointer; transition: opacity 0.2s;}
+.event-chip:hover { opacity: 0.8; }
+.event-blue { background: #D1E5F9; color: #185FA5; }
+.event-green { background: #E1F5EE; color: #1D9E75; }
+.event-red { background: #FAECE7; color: #D85A30; }
+
+/* --- PANEL DERECHO (Milestones) --- */
+.cal-right-panel { display: flex; flex-direction: column; }
+.milestones-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+.milestone-item { border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
+.milestone-item h4 { font-size: 13px; font-weight: 700; color: #2C2C2A; margin-bottom: 5px; }
+.milestone-item p { font-size: 12px; color: #888780; }
+
+.event-details-card { background: #fff; border: 1px solid #eaeaea; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 12px; }
+.event-details-card h4 { font-size: 14px; font-weight: 700; color: #2C2C2A; }
+.event-details-card p { font-size: 13px; color: #5F5E5A; line-height: 1.4; }
