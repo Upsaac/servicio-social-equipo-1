@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Huella Solidaria - Panel de Proyectos</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/proyectos.css">
-  <link rel="stylesheet" href="css/sidebar.css">
 </head>
 
 <body>
@@ -17,7 +18,7 @@
         <div class="sb-logo">
           <div class="sb-logo-grid">
             <span style="background:#1D9E75;border-radius:2px 2px 2px 0;"></span>
-            <span style="background:#fff;border-radius:2px 2px 0 2px;opacity:0.9;"></span>
+            <span style="background:#413434;opacity:0.9;border-radius:2px 2px 0 2px;"></span>
             <span style="background:#D85A30;border-radius:2px 0 2px 2px;"></span>
             <span style="background:#7F77DD;border-radius:0 2px 2px 2px;"></span>
           </div>
@@ -85,15 +86,13 @@
           <p>Vista general de todos los proyectos activos</p>
         </div>
         <div class="topbar-right">
-          <span class="bell-icon"></span>
           <div class="search-box">
-            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"
-              style="color:#888780;flex-shrink:0;margin-right:8px;">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" style="color:#888780;flex-shrink:0;">
               <path fill-rule="evenodd"
                 d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                 clip-rule="evenodd" />
             </svg>
-            Buscar proyectos, líderes, lugares...
+            <input type="text" placeholder="Buscar proyectos, líderes, lugares..." />
           </div>
           <button id="btnNuevoProyecto" class="btn-new" onclick="window.location.href='crear-proyecto.html'">+ Nuevo proyecto</button>
         </div>
@@ -106,8 +105,8 @@
             <div class="kpi-header">
               <div>
                 <p class="kpi-title">Total Proyectos</p>
-                <h3 class="kpi-val">6</h3>
-                <p class="kpi-sub text-orange">+2 este mes</p>
+                <h3 class="kpi-val" id="kpi-proyectos">14</h3>
+                <p class="kpi-sub text-orange">+2 este semestre</p>
               </div>
               <div class="kpi-icon icon-blue">
                 <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
@@ -121,8 +120,8 @@
             <div class="kpi-header">
               <div>
                 <p class="kpi-title">Total Beneficiarios</p>
-                <h3 class="kpi-val">1,695</h3>
-                <p class="kpi-sub">Hombres 865 - Mujeres 830</p>
+                <h3 class="kpi-val" id="kpi-beneficiarios">1,695</h3>
+                <p class="kpi-sub" id="kpi-beneficiarios-sub">Hombres 865 - Mujeres 830</p>
               </div>
               <div class="kpi-icon icon-orange">
                 <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
@@ -139,7 +138,7 @@
             <div class="kpi-header">
               <div>
                 <p class="kpi-title">Líderes Activos</p>
-                <h3 class="kpi-val">5</h3>
+                <h3 class="kpi-val" id="kpi-lideres">16</h3>
                 <p class="kpi-sub text-purple">100% participación</p>
               </div>
               <div class="kpi-icon icon-purple">
@@ -163,8 +162,8 @@
             <div class="kpi-header">
               <div>
                 <p class="kpi-title">Zonas de Intervención</p>
-                <h3 class="kpi-val">6</h3>
-                <p class="kpi-sub text-blue">En 6 estados</p>
+                <h3 class="kpi-val" id="kpi-zonas">6</h3>
+                <p class="kpi-sub text-blue" id="kpi-zonas-sub">En 6 zonas</p>
               </div>
               <div class="kpi-icon icon-blue">
                 <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
@@ -180,8 +179,8 @@
           <div class="kpi-card">
             <div class="kpi-header">
               <div>
-                <p class="kpi-title">Número de Personas</p>
-                <h3 class="kpi-val">67</h3>
+                <p class="kpi-title">Número de Actividades</p>
+                <h3 class="kpi-val" id="kpi-actividades">67</h3>
                 <p class="kpi-sub text-blue cursor-pointer">Ver detalles</p>
               </div>
               <div class="kpi-icon icon-green">
@@ -197,102 +196,29 @@
         <div class="filters-panel">
           <h4 class="filters-title">Filtros Avanzados</h4>
           <div class="filters-controls">
-            <div class="filter-group">
-              <select class="filter-select">
-                <option>Todas las categorías</option>
+            <div class="filter-group" style="flex-wrap:wrap; gap:10px; flex:1;">
+              <select class="filter-select" id="filterODS" onchange="applyFiltersProyectos()">
+                <option value="">Todos los ODS</option>
+                <!-- Poblado dinámicamente por proyectos.js -->
               </select>
-              <select class="filter-select">
-                <option>Todos los estados</option>
+              <select class="filter-select" id="filterZona" onchange="applyFiltersProyectos()">
+                <option value="">Todas las zonas</option>
+                <option value="Puebla">Puebla</option>
+                <option value="Cholula">Cholula</option>
+                <option value="Tehuacan">Tehuacan</option>
               </select>
-              <button class="filter-chip chip-blue">Medio Ambiente</button>
-              <button class="filter-chip chip-purple">Educación</button>
-              <button class="filter-chip chip-red">Salud</button>
             </div>
-
-            <div class="filter-group right">
-              <div class="age-range">
-                <span class="text-xs">Rango de Edad</span>
-                <div class="dots">
-                  <span class="dot active"></span>
-                  <span class="dot active"></span>
-                  <span class="dot active"></span>
-                  <span class="dot"></span>
-                </div>
-              </div>
-              <button class="btn-clear" id="btnLimpiar">Limpiar filtros</button>
-            </div>
+          </div>
+          <div class="ods-chips-row" id="odsChipsContainer">
+            <!-- Poblado dinámicamente por proyectos.js -->
+          </div>
+          <div class="filters-footer">
+            <button class="btn-clear" id="btnLimpiar">Limpiar filtros</button>
           </div>
         </div>
 
-        <div class="projects-detailed-grid">
-
-          <div class="proj-card top-green">
-            <div class="proj-header-flex">
-              <h3 class="proj-title">Selelios</h3>
-              <span class="badge badge-blue">Educación</span>
-            </div>
-            <div class="proj-content-flex">
-              <div class="proj-info">
-                <p class="proj-meta">Líder: Víctor Ortiz</p>
-                <p class="proj-meta">Ubicación: Puebla, Puebla</p>
-                <p class="proj-desc">Descripción...</p>
-              </div>
-              <div class="proj-image-circle">
-              </div>
-            </div>
-            <div class="proj-footer">
-              <button class="btn-orange" onclick="window.location.href='proyecto-detalle.html'">Detalles
-                Completos</button>
-              <span class="action-icon"></span>
-            </div>
-          </div>
-
-          <div class="proj-card top-purple">
-            <div class="proj-header-flex">
-              <h3 class="proj-title">Alfabetización Digital Rural</h3>
-              <span class="badge badge-purple">Educación</span>
-            </div>
-            <div class="proj-content-flex">
-              <div class="proj-info w-100">
-                <p class="proj-meta">Líder: Carlos Ramírez</p>
-                <p class="proj-meta">Ubicación: Oaxaca, Oaxaca</p>
-                <div class="proj-stats-mt">
-                  <p class="text-xs">Desempeño del Proyecto: 70%</p>
-                  <p class="text-xs">Total Beneficiarios (180)</p>
-                  <p class="text-xs color-muted">Niños/Niñas (90), Adultos (90)</p>
-                </div>
-              </div>
-            </div>
-            <div class="proj-footer">
-              <button class="btn-orange" onclick="window.location.href='proyecto-detalle.html'">Detalles
-                Completos</button>
-              <span class="action-icon"></span>
-            </div>
-          </div>
-
-          <div class="proj-card top-red">
-            <div class="proj-header-flex">
-              <h3 class="proj-title">Salud Preventiva Comunitaria</h3>
-              <span class="badge badge-red">Salud</span>
-            </div>
-            <div class="proj-content-flex">
-              <div class="proj-info w-100">
-                <p class="proj-meta">Líder: Ana Torres</p>
-                <p class="proj-meta">Ubicación: Mérida, Yucatán</p>
-                <div class="proj-stats-mt">
-                  <p class="text-xs">Desempeño del Proyecto: 92%</p>
-                  <p class="text-xs">Total Beneficiarios (450)</p>
-                  <p class="text-xs color-muted">Niños/Niñas (250), Adultos (200)</p>
-                </div>
-              </div>
-            </div>
-            <div class="proj-footer">
-              <button class="btn-orange" onclick="window.location.href='proyecto-detalle.html'">Detalles
-                Completos</button>
-              <span class="action-icon"></span>
-            </div>
-          </div>
-
+        <div class="projects-detailed-grid" id="projectsDetailedGrid">
+          <!-- Generado dinámicamente desde js/data.js -->
         </div>
 
         <div class="export-panel">
@@ -307,6 +233,7 @@
     </div>
   </div>
 
+  <script src="js/data.js"></script>
   <script src="js/proyectos.js"></script>
   <script src="js/sidebar.js"></script>
 </body>

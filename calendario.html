@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Huella Solidaria - Calendario</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/calendario.css">
-  <link rel="stylesheet" href="css/sidebar.css">
 </head>
 
 <body>
@@ -17,7 +18,7 @@
         <div class="sb-logo">
           <div class="sb-logo-grid">
             <span style="background:#1D9E75;border-radius:2px 2px 2px 0;"></span>
-            <span style="background:#fff;border-radius:2px 2px 0 2px;opacity:0.9;"></span>
+            <span style="background:#413434;opacity:0.9;border-radius:2px 2px 0 2px;"></span>
             <span style="background:#D85A30;border-radius:2px 0 2px 2px;"></span>
             <span style="background:#7F77DD;border-radius:0 2px 2px 2px;"></span>
           </div>
@@ -85,13 +86,12 @@
         </div>
         <div class="topbar-right">
           <div class="search-box">
-            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"
-              style="color:#888780;flex-shrink:0;margin-right:8px;">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" style="color:#888780;flex-shrink:0;">
               <path fill-rule="evenodd"
                 d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                 clip-rule="evenodd" />
             </svg>
-            Buscar proyectos, líderes, lugares...
+            <input type="text" placeholder="Buscar proyectos, líderes, lugares..." />
           </div>
         </div>
       </div>
@@ -104,10 +104,10 @@
             <h3 class="panel-title">Filtros</h3>
 
             <div class="filter-group">
-              <h4 class="filter-subtitle">Categoría de Proyecto</h4>
-              <label class="check-label"><input type="checkbox" checked> Educación</label>
-              <label class="check-label"><input type="checkbox" checked> Salud</label>
-              <label class="check-label"><input type="checkbox" checked> Medio Ambiente</label>
+              <h4 class="filter-subtitle">ODS del Proyecto</h4>
+              <label class="check-label"><input type="checkbox" checked> ODS 4 — Educación de calidad</label>
+              <label class="check-label"><input type="checkbox" checked> ODS 3 — Salud y bienestar</label>
+              <label class="check-label"><input type="checkbox" checked> ODS 15 — Vida de ecosistemas terrestres</label>
             </div>
 
             <div class="filter-group">
@@ -147,7 +147,7 @@
                 <div class="cal-cell">31</div>
                 <div class="cal-cell">
                   1
-                  <div class="event-chip event-blue" data-id="1">Evento A<br>(Educación)</div>
+                  <div class="event-chip event-blue" data-id="1">Evento A<br>(ODS 4)</div>
                 </div>
                 <div class="cal-cell">2</div>
                 <div class="cal-cell">3</div>
@@ -155,7 +155,7 @@
                 <div class="cal-cell">4</div>
                 <div class="cal-cell">
                   5
-                  <div class="event-chip event-green" data-id="2">Evento B<br>(Medio Ambiente)</div>
+                  <div class="event-chip event-green" data-id="2">Evento B<br>(ODS 15)</div>
                 </div>
                 <div class="cal-cell">6</div>
                 <div class="cal-cell">7</div>
@@ -163,7 +163,7 @@
                 <div class="cal-cell">9</div>
                 <div class="cal-cell">
                   10
-                  <div class="event-chip event-red" data-id="3">Evento C<br>(Salud)</div>
+                  <div class="event-chip event-red" data-id="3">Evento C<br>(ODS 3)</div>
                 </div>
 
                 <div class="cal-cell">11</div>

@@ -1,5 +1,5 @@
-/* ── Shared sidebar styles — matches dashboard ── */
 
+/* ─── Sidebar ────────────────────────────── */
 .sidebar {
   width: 260px;
   background: #185FA5;
@@ -73,7 +73,6 @@
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
-  cursor: pointer;
 }
 
 .sb-item:hover {
@@ -90,7 +89,6 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  opacity: 1;
 }
 
 .sb-footer {
@@ -114,7 +112,6 @@
   height: 38px;
   border-radius: 50%;
   background: #EF9F27;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,7 +142,6 @@
   align-items: center;
   transition: color 0.15s;
   flex-shrink: 0;
-  text-decoration: none;
 }
 
 .sb-logout:hover {

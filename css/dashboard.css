@@ -458,6 +458,16 @@ body {
 .chip-coral             { background: #F1EFE8; color: #5F5E5A; border-color: #D3D1C7; }
 .chip-coral.active-chip { background: #FAECE7; color: #993C1D; border-color: #F0997B; }
 
+/* Chips ODS — color via CSS custom property */
+.ods-chip { background: #F1EFE8; color: #5F5E5A; border-color: #D3D1C7; font-size: 12px; font-weight: 600; }
+.ods-chip.active-chip {
+  background: color-mix(in srgb, var(--ods-color) 12%, white);
+  color: var(--ods-color);
+  border-color: var(--ods-color);
+}
+
+.ods-chips-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
 /* ─── Projects ───────────────────────────── */
 .projects-header {
   display: flex;
