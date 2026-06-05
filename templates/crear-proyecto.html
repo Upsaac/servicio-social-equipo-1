@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Solidaria — Crear Proyecto</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+  <style>
+    .form-container{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:700px;margin-top:20px;border:1px solid #f1f5f9;}
+    .form-row{display:flex;gap:20px;}
+    .form-group{margin-bottom:20px;flex:1;}
+    .form-label{display:block;font-size:14px;font-weight:600;color:#413434;margin-bottom:8px;}
+    .form-input,.form-select,.form-textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;}
+    .form-textarea{resize:vertical;min-height:100px;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.1);}
+    .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;border-top:1px solid #f1f5f9;padding-top:20px;}
+    .btn-submit{background:#1D9E75;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .btn-submit:hover{background:#158360;}
+    .btn-cancel{background:#f1f5f9;color:#64748b;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .btn-cancel:hover{background:#e2e8f0;color:#0f172a;}
+    .error-banner{display:none;background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;}
+    .ods-multi{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+    .ods-multi label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:4px 10px;}
+    .ods-multi input[type=checkbox]{accent-color:#185FA5;}
+  </style>
+</head>
+<body>
+
+<div class="dash">
+  {% include 'sidebar.html' %}
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2>Crear Nuevo Proyecto</h2>
+        <p>Completa el formulario para registrar una nueva iniciativa</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-container">
+        <div class="error-banner" id="errorBanner"></div>
+        <form id="crearForm">
+
+          <div class="form-group">
+            <label class="form-label">Nombre del Proyecto *</label>
+            <input type="text" id="nombre" class="form-input" placeholder="Ej. Reforestación Urbana" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Modalidad *</label>
+              <select id="modalidad" class="form-select" required>
+                <option value="presencial">Presencial</option>
+                <option value="en_linea">En línea</option>
+                <option value="mixto">Mixto</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tipo de periodo *</label>
+              <select id="periodo_tipo" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="5_semanas">5 semanas</option>
+                <option value="10_semanas">10 semanas</option>
+                <option value="15_semanas">15 semanas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fecha de inicio *</label>
+              <input type="date" id="fecha_inicio" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha de fin *</label>
+              <input type="date" id="fecha_fin" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ubicación</label>
+              <input type="text" id="ubicacion" class="form-input" placeholder="Ej. Cholula, Puebla">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Meta de Beneficiarios</label>
+              <input type="number" id="meta_beneficiarios" class="form-input" placeholder="Ej. 500" min="1">
+            </div>
+          </div>
+
+          {% if current_user.rol == 'admin' %}
+          <div class="form-group">
+            <label class="form-label">Líder Asignado</label>
+            <select id="lider_id" class="form-select">
+              <option value="">Sin asignar (se asigna automáticamente)</option>
+              {% for lider in lideres %}
+              <option value="{{ lider.id }}">{{ lider.nombre }} — {{ lider.email }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+
+          <div class="form-group">
+            <label class="form-label">ODS Vinculados *</label>
+            <div class="ods-multi" id="odsContainer">
+              {% for ods in ods_list %}
+              <label>
+                <input type="checkbox" name="ods_ids" value="{{ ods.id }}">
+                ODS {{ ods.numero }} — {{ ods.nombre }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Imagen del proyecto</label>
+            <input type="file" id="fotoInput" accept="image/*" class="form-input"
+                   onchange="previewFoto(this)">
+            <img id="fotoPreview" style="display:none;margin-top:8px;max-height:140px;border-radius:8px;object-fit:cover;max-width:100%;">
+            <input type="hidden" id="imagen_url">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descripción de la Iniciativa *</label>
+            <textarea id="descripcion" class="form-textarea" placeholder="Describe brevemente los objetivos y actividades principales..." required></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="window.location.href='/proyectos'">Cancelar</button>
+            <button type="submit" class="btn-submit">Guardar Proyecto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script>
+function previewFoto(input) {
+  const preview = document.getElementById('fotoPreview');
+  if (input.files && input.files[0]) {
+    preview.src = URL.createObjectURL(input.files[0]);
+    preview.style.display = 'block';
+  }
+}
+
+async function subirFoto(input) {
+  if (!input.files || !input.files[0]) return null;
+  const fd = new FormData();
+  fd.append('foto', input.files[0]);
+  const res = await fetch('/api/upload-foto', { method: 'POST', body: fd });
+  const data = await res.json();
+  return data.url || null;
+}
+
+document.getElementById('crearForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const banner = document.getElementById('errorBanner');
+  banner.style.display = 'none';
+
+  const ods_ids = [...document.querySelectorAll('input[name=ods_ids]:checked')].map(el => parseInt(el.value));
+
+  const payload = {
+    nombre: document.getElementById('nombre').value,
+    modalidad: document.getElementById('modalidad').value,
+    periodo_tipo: document.getElementById('periodo_tipo').value,
+    fecha_inicio: document.getElementById('fecha_inicio').value,
+    fecha_fin: document.getElementById('fecha_fin').value,
+    ubicacion: document.getElementById('ubicacion').value,
+    meta_beneficiarios: parseInt(document.getElementById('meta_beneficiarios').value) || null,
+    descripcion: document.getElementById('descripcion').value,
+    ods_ids: ods_ids,
+  };
+
+  const imgUrl = await subirFoto(document.getElementById('fotoInput'));
+  if (imgUrl) payload.imagen_url = imgUrl;
+
+  {% if current_user.rol == 'admin' %}
+  const liderId = document.getElementById('lider_id').value;
+  if (liderId) payload.lider_id = parseInt(liderId);
+  {% endif %}
+
+  try {
+    const res = await fetch('/api/proyectos', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      window.location.href = '/proyectos';
+    } else {
+      const err = await res.json();
+      banner.textContent = err.error || 'Error al crear el proyecto.';
+      banner.style.display = 'block';
+    }
+  } catch {
+    banner.textContent = 'Error de conexión. Intenta de nuevo.';
+    banner.style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

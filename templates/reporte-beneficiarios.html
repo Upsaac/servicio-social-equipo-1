@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Solidaria — Reporte de Beneficiarios</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+  <style>
+    .form-container{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:700px;margin-top:20px;border:1px solid #f1f5f9;}
+    .form-row{display:flex;gap:20px;}
+    .form-group{margin-bottom:20px;flex:1;}
+    .form-label{display:block;font-size:14px;font-weight:600;color:#413434;margin-bottom:8px;}
+    .form-sublabel{font-size:12px;color:#888780;font-weight:400;}
+    .form-input,.form-select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;}
+    .form-input:focus,.form-select:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.1);}
+    .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;border-top:1px solid #f1f5f9;padding-top:20px;}
+    .btn-submit{background:#1D9E75;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .btn-cancel{background:#f1f5f9;color:#64748b;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .section-divider{font-size:13px;font-weight:600;color:#185FA5;margin:8px 0 16px;padding-bottom:8px;border-bottom:1px solid #e2e8f0;}
+    .error-banner{display:none;background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;}
+    .success-banner{display:none;background:#D1FAE5;color:#065F46;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;}
+  </style>
+</head>
+<body>
+<div class="dash">
+  {% include 'sidebar.html' %}
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2>Reporte de Beneficiarios</h2>
+        <p>Registra el conteo demográfico de tu proyecto para el periodo</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-container">
+        <div class="error-banner" id="errorBanner"></div>
+        <div class="success-banner" id="successBanner"></div>
+        <form id="reporteForm">
+
+          <div class="form-group">
+            <label class="form-label">Proyecto *</label>
+            <select id="proyecto_id" class="form-select" required>
+              <option value="">Selecciona un proyecto</option>
+              {% for p in proyectos %}
+              <option value="{{ p.id }}">{{ p.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Inicio del periodo *</label>
+              <input type="date" id="periodo_inicio" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fin del periodo *</label>
+              <input type="date" id="periodo_fin" class="form-input" required>
+            </div>
+          </div>
+
+          <p class="section-divider">Total de beneficiarios</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Total del periodo *</label>
+              <input type="number" id="total" class="form-input" placeholder="Ej. 120" min="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hombres</label>
+              <input type="number" id="hombres" class="form-input" placeholder="Ej. 60" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mujeres</label>
+              <input type="number" id="mujeres" class="form-input" placeholder="Ej. 60" min="0">
+            </div>
+          </div>
+
+          <p class="section-divider">Desglose por edad</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">6–9 años <span class="form-sublabel">(Primaria baja)</span></label>
+              <input type="number" id="edad_6_9" class="form-input" placeholder="0" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">10–12 años <span class="form-sublabel">(Primaria alta)</span></label>
+              <input type="number" id="edad_10_12" class="form-input" placeholder="0" min="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">13–15 años <span class="form-sublabel">(Secundaria)</span></label>
+              <input type="number" id="edad_13_15" class="form-input" placeholder="0" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">16+ años <span class="form-sublabel">(Prepa / adultos)</span></label>
+              <input type="number" id="edad_16_mas" class="form-input" placeholder="0" min="0">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="history.back()">Cancelar</button>
+            <button type="submit" class="btn-submit">Guardar Reporte</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script>
+/* Pre-selecciona el proyecto si viene ?proyecto=ID en la URL */
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const pid = params.get('proyecto');
+  if (pid) {
+    const sel = document.getElementById('proyecto_id');
+    if (sel) sel.value = pid;
+  }
+})();
+
+document.getElementById('reporteForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const error = document.getElementById('errorBanner');
+  const success = document.getElementById('successBanner');
+  error.style.display = 'none';
+  success.style.display = 'none';
+
+  const proyectoId = parseInt(document.getElementById('proyecto_id').value);
+  const payload = {
+    proyecto_id: proyectoId,
+    periodo_inicio: document.getElementById('periodo_inicio').value,
+    periodo_fin: document.getElementById('periodo_fin').value,
+    total: parseInt(document.getElementById('total').value),
+    hombres: parseInt(document.getElementById('hombres').value) || 0,
+    mujeres: parseInt(document.getElementById('mujeres').value) || 0,
+    edad_6_9: parseInt(document.getElementById('edad_6_9').value) || 0,
+    edad_10_12: parseInt(document.getElementById('edad_10_12').value) || 0,
+    edad_13_15: parseInt(document.getElementById('edad_13_15').value) || 0,
+    edad_16_mas: parseInt(document.getElementById('edad_16_mas').value) || 0,
+  };
+
+  try {
+    const res = await fetch('/api/reportes-beneficiarios', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      success.textContent = '¡Reporte guardado correctamente!';
+      success.style.display = 'block';
+      this.reset();
+      setTimeout(() => window.location.href = '/proyectos/' + proyectoId, 1500);
+    } else {
+      const err = await res.json();
+      error.textContent = err.error || 'Error al guardar el reporte.';
+      error.style.display = 'block';
+    }
+  } catch {
+    error.textContent = 'Error de conexión. Intenta de nuevo.';
+    error.style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

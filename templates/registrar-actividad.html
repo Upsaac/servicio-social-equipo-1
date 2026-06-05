@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Solidaria — Registrar Actividad</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+  <style>
+    .form-container{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:700px;margin-top:20px;border:1px solid #f1f5f9;}
+    .form-row{display:flex;gap:20px;}
+    .form-group{margin-bottom:20px;flex:1;}
+    .form-label{display:block;font-size:14px;font-weight:600;color:#413434;margin-bottom:8px;}
+    .form-input,.form-select,.form-textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;}
+    .form-textarea{resize:vertical;min-height:100px;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.1);}
+    .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;border-top:1px solid #f1f5f9;padding-top:20px;}
+    .btn-submit{background:#1D9E75;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .btn-cancel{background:#f1f5f9;color:#64748b;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .error-banner{display:none;background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;}
+    .success-banner{display:none;background:#D1FAE5;color:#065F46;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;}
+  </style>
+</head>
+<body>
+<div class="dash">
+  {% include 'sidebar.html' %}
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2>Registrar Actividad</h2>
+        <p>Documenta una sesión o actividad realizada en tu proyecto</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-container">
+        <div class="error-banner" id="errorBanner"></div>
+        <div class="success-banner" id="successBanner"></div>
+        <form id="actividadForm">
+
+          <div class="form-group">
+            <label class="form-label">Proyecto *</label>
+            <select id="proyecto_id" class="form-select" required>
+              <option value="">Selecciona un proyecto</option>
+              {% for p in proyectos %}
+              <option value="{{ p.id }}">{{ p.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fecha de la actividad *</label>
+              <input type="date" id="fecha" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duración (minutos)</label>
+              <input type="number" id="duracion_minutos" class="form-input" placeholder="Ej. 90" min="1">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tema / Nombre de la actividad *</label>
+              <input type="text" id="tema" class="form-input" placeholder="Ej. Taller de matemáticas básicas" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Beneficiarios presentes</label>
+              <input type="number" id="num_beneficiarios_presentes" class="form-input" placeholder="Ej. 35" min="0">
+            </div>
+          </div>
+
+          <!-- Campos personalizados: se generan dinámicamente al elegir proyecto -->
+          <div id="camposExtra"></div>
+
+          <div class="form-group">
+            <label class="form-label">Observaciones</label>
+            <textarea id="observaciones" class="form-textarea" placeholder="Notas libres: incidencias, logros destacados..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="history.back()">Cancelar</button>
+            <button type="submit" class="btn-submit">Guardar Actividad</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script>
+/* Pre-selecciona el proyecto y carga campos personalizados */
+async function cargarCamposProyecto(proyectoId) {
+  const container = document.getElementById('camposExtra');
+  if (!proyectoId) { container.innerHTML = ''; return; }
+  try {
+    const res = await fetch('/api/proyectos/' + proyectoId);
+    const p   = await res.json();
+    if (!p.campos || !p.campos.length) { container.innerHTML = ''; return; }
+    container.innerHTML = `
+      <div style="background:#f8fafc;border-radius:8px;padding:14px 16px;margin-bottom:16px;border:1px solid #e2e8f0;">
+        <p style="font-size:12px;font-weight:600;color:#185FA5;margin:0 0 12px;text-transform:uppercase;letter-spacing:.05em;">
+          Métricas de ${p.nombre}
+        </p>
+        ${p.campos.map(c => `
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label">${c.nombre}${c.unidad ? ' (' + c.unidad + ')' : ''}</label>
+            <input type="${c.tipo === 'numero' ? 'number' : 'text'}"
+                   id="campo_${c.id}" class="form-input"
+                   data-campo-id="${c.id}" data-campo-tipo="${c.tipo}"
+                   placeholder="${c.tipo === 'numero' ? 'Ej. 12.5' : 'Escribe aquí...'}">
+          </div>`).join('')}
+      </div>`;
+  } catch (e) { console.error('cargarCamposProyecto', e); }
+}
+
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const pid = params.get('proyecto');
+  const sel = document.getElementById('proyecto_id');
+  if (pid && sel) { sel.value = pid; cargarCamposProyecto(pid); }
+  if (sel) sel.addEventListener('change', () => cargarCamposProyecto(sel.value));
+})();
+
+document.getElementById('actividadForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const error = document.getElementById('errorBanner');
+  const success = document.getElementById('successBanner');
+  error.style.display = 'none';
+  success.style.display = 'none';
+
+  const metricas = [...document.querySelectorAll('[data-campo-id]')]
+    .map(el => ({
+      campo_id:    parseInt(el.dataset.campoId),
+      valor_numero: el.dataset.campoTipo === 'numero' ? (parseFloat(el.value) ?? null) : null,
+      valor_texto:  el.dataset.campoTipo === 'texto'  ? (el.value || null) : null,
+    }))
+    .filter(m => m.valor_numero !== null || m.valor_texto);
+
+  const payload = {
+    proyecto_id: parseInt(document.getElementById('proyecto_id').value),
+    fecha: document.getElementById('fecha').value,
+    tema: document.getElementById('tema').value,
+    duracion_minutos: parseInt(document.getElementById('duracion_minutos').value) || null,
+    num_beneficiarios_presentes: parseInt(document.getElementById('num_beneficiarios_presentes').value) || null,
+    observaciones: document.getElementById('observaciones').value || null,
+    metricas,
+  };
+
+  try {
+    const res = await fetch('/api/actividades', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      success.textContent = '¡Actividad registrada correctamente!';
+      success.style.display = 'block';
+      this.reset();
+      setTimeout(() => window.location.href = '/proyectos/' + payload.proyecto_id, 1500);
+    } else {
+      const err = await res.json();
+      error.textContent = err.error || 'Error al guardar la actividad.';
+      error.style.display = 'block';
+    }
+  } catch {
+    error.textContent = 'Error de conexión. Intenta de nuevo.';
+    error.style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

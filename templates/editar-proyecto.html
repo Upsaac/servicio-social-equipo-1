@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Solidaria — Editar Proyecto</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+  <style>
+    .form-container{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:700px;margin-top:20px;border:1px solid #f1f5f9;}
+    .form-row{display:flex;gap:20px;}
+    .form-group{margin-bottom:20px;flex:1;}
+    .form-label{display:block;font-size:14px;font-weight:600;color:#413434;margin-bottom:8px;}
+    .form-input,.form-select,.form-textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;}
+    .form-textarea{resize:vertical;min-height:100px;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.1);}
+    .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;border-top:1px solid #f1f5f9;padding-top:20px;}
+    .btn-submit{background:#1D9E75;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .btn-cancel{background:#f1f5f9;color:#64748b;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+    .error-banner{display:none;background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;}
+    .ods-multi{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+    .ods-multi label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:4px 10px;}
+    .ods-multi input[type=checkbox]{accent-color:#185FA5;}
+  </style>
+</head>
+<body>
+
+<script>const PROYECTO_ID = {{ proyecto.id }};</script>
+
+<div class="dash">
+  {% include 'sidebar.html' %}
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="/proyectos/{{ proyecto.id }}" class="back-link">← Volver al proyecto</a>
+        <h2>Editar Proyecto: {{ proyecto.nombre }}</h2>
+        <p>Actualiza la información y metas</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-container">
+        <div class="error-banner" id="errorBanner"></div>
+        <form id="editarForm">
+
+          <div class="form-group">
+            <label class="form-label">Nombre del Proyecto *</label>
+            <input type="text" id="nombre" class="form-input" value="{{ proyecto.nombre }}" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Modalidad *</label>
+              <select id="modalidad" class="form-select" required>
+                <option value="presencial" {% if proyecto.modalidad == 'presencial' %}selected{% endif %}>Presencial</option>
+                <option value="en_linea" {% if proyecto.modalidad == 'en_linea' %}selected{% endif %}>En línea</option>
+                <option value="mixto" {% if proyecto.modalidad == 'mixto' %}selected{% endif %}>Mixto</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tipo de periodo</label>
+              <select id="periodo_tipo" class="form-select">
+                <option value="">—</option>
+                <option value="5_semanas" {% if proyecto.periodo_tipo == '5_semanas' %}selected{% endif %}>5 semanas</option>
+                <option value="10_semanas" {% if proyecto.periodo_tipo == '10_semanas' %}selected{% endif %}>10 semanas</option>
+                <option value="15_semanas" {% if proyecto.periodo_tipo == '15_semanas' %}selected{% endif %}>15 semanas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fecha de inicio</label>
+              <input type="date" id="fecha_inicio" class="form-input" value="{{ proyecto.fecha_inicio or '' }}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha de fin</label>
+              <input type="date" id="fecha_fin" class="form-input" value="{{ proyecto.fecha_fin or '' }}">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ubicación</label>
+              <input type="text" id="ubicacion" class="form-input" value="{{ proyecto.ubicacion or '' }}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Meta de Beneficiarios</label>
+              <input type="number" id="meta_beneficiarios" class="form-input" value="{{ proyecto.meta_beneficiarios or '' }}" min="1">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ODS Vinculados</label>
+            <div class="ods-multi">
+              {% set ods_actuales = proyecto.ods | map(attribute='id') | list %}
+              {% for ods in ods_list %}
+              <label>
+                <input type="checkbox" name="ods_ids" value="{{ ods.id }}"
+                  {% if ods.id in ods_actuales %}checked{% endif %}>
+                ODS {{ ods.numero }} — {{ ods.nombre }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Imagen del proyecto</label>
+            {% if proyecto.imagen_url %}
+            <img id="fotoPreview" src="{{ proyecto.imagen_url }}"
+                 style="display:block;margin-bottom:8px;max-height:140px;border-radius:8px;object-fit:cover;max-width:100%;">
+            {% else %}
+            <img id="fotoPreview" style="display:none;margin-bottom:8px;max-height:140px;border-radius:8px;object-fit:cover;max-width:100%;">
+            {% endif %}
+            <input type="file" id="fotoInput" accept="image/*" class="form-input"
+                   onchange="previewFoto(this)">
+            <input type="hidden" id="imagen_url" value="{{ proyecto.imagen_url or '' }}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descripción *</label>
+            <textarea id="descripcion" class="form-textarea" required>{{ proyecto.descripcion or '' }}</textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="window.location.href='/proyectos/{{ proyecto.id }}'">Cancelar</button>
+            <button type="submit" class="btn-submit">Guardar Cambios</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── Equipo del proyecto ── -->
+      <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:700px;margin-top:20px;border:1px solid #f1f5f9;">
+        <h3 style="font-size:15px;font-weight:600;margin:0 0 4px;color:#2C2C2A;">Equipo del proyecto</h3>
+        <p style="font-size:13px;color:#888780;margin:0 0 16px;">Agrega a los Prestadores de Servicio Social y otros colaboradores.</p>
+        <div id="equipoLista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <input type="text" id="nuevoNombre" placeholder="Nombre completo" class="form-input" style="flex:2;min-width:140px;">
+          <input type="text" id="nuevoRol" placeholder="Rol (ej. Prestador de SS)" class="form-input" style="flex:2;min-width:140px;">
+          <button onclick="agregarMiembro()" class="btn-submit" style="white-space:nowrap;">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- ── Métricas personalizadas ── -->
+      <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:700px;margin-top:20px;border:1px solid #f1f5f9;margin-bottom:32px;">
+        <h3 style="font-size:15px;font-weight:600;margin:0 0 4px;color:#2C2C2A;">Métricas personalizadas</h3>
+        <p style="font-size:13px;color:#888780;margin:0 0 16px;">Define campos únicos de tu proyecto para registrar en cada actividad.<br>Ej: "Kg de residuos" (número), "Idioma de clase" (texto).</p>
+        <div id="camposLista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <input type="text" id="campNombre" placeholder="Nombre del campo" class="form-input" style="flex:3;min-width:140px;">
+          <select id="campTipo" class="form-select" style="flex:1;min-width:100px;">
+            <option value="numero">Número</option>
+            <option value="texto">Texto</option>
+          </select>
+          <input type="text" id="campUnidad" placeholder="Unidad (opcional)" class="form-input" style="flex:1;min-width:80px;">
+          <button onclick="agregarCampo()" class="btn-submit" style="white-space:nowrap;">+ Agregar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script>
+function previewFoto(input) {
+  const preview = document.getElementById('fotoPreview');
+  if (input.files && input.files[0]) {
+    preview.src = URL.createObjectURL(input.files[0]);
+    preview.style.display = 'block';
+  }
+}
+
+async function subirFoto(input) {
+  if (!input.files || !input.files[0]) return null;
+  const fd = new FormData();
+  fd.append('foto', input.files[0]);
+  const res = await fetch('/api/upload-foto', { method: 'POST', body: fd });
+  const data = await res.json();
+  return data.url || null;
+}
+
+document.getElementById('editarForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const banner = document.getElementById('errorBanner');
+  banner.style.display = 'none';
+
+  const imgUrl = await subirFoto(document.getElementById('fotoInput'));
+  const existingUrl = document.getElementById('imagen_url').value;
+
+  const ods_ids = [...document.querySelectorAll('input[name=ods_ids]:checked')].map(el => parseInt(el.value));
+  const payload = {
+    nombre: document.getElementById('nombre').value,
+    modalidad: document.getElementById('modalidad').value,
+    periodo_tipo: document.getElementById('periodo_tipo').value || null,
+    fecha_inicio: document.getElementById('fecha_inicio').value || null,
+    fecha_fin: document.getElementById('fecha_fin').value || null,
+    ubicacion: document.getElementById('ubicacion').value || null,
+    meta_beneficiarios: parseInt(document.getElementById('meta_beneficiarios').value) || null,
+    descripcion: document.getElementById('descripcion').value,
+    imagen_url: imgUrl || existingUrl || null,
+    ods_ids,
+  };
+
+  try {
+    const res = await fetch('/api/proyectos/' + PROYECTO_ID, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      window.location.href = '/proyectos/' + PROYECTO_ID;
+    } else {
+      const err = await res.json();
+      banner.textContent = err.error || 'Error al guardar cambios.';
+      banner.style.display = 'block';
+    }
+  } catch {
+    banner.textContent = 'Error de conexión.';
+    banner.style.display = 'block';
+  }
+});
+
+/* ── Equipo ── */
+async function cargarEquipo() {
+  const res = await fetch('/api/proyectos/' + PROYECTO_ID);
+  const p   = await res.json();
+  renderEquipo(p.equipo || []);
+}
+
+function renderEquipo(equipo) {
+  const lista = document.getElementById('equipoLista');
+  if (!equipo.length) {
+    lista.innerHTML = '<p style="color:#888780;font-size:13px;">Sin miembros adicionales.</p>';
+    return;
+  }
+  lista.innerHTML = equipo.map(m => `
+    <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:8px;padding:8px 12px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;">
+        ${m.nombre.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()}
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:600;">${m.nombre}</div>
+        <div style="font-size:12px;color:#888780;">${m.rol}</div>
+      </div>
+      <button onclick="eliminarMiembro(${m.id})" style="background:none;border:none;color:#D85A30;cursor:pointer;font-size:18px;line-height:1;padding:0 4px;">×</button>
+    </div>`).join('');
+}
+
+async function agregarMiembro() {
+  const nombre = document.getElementById('nuevoNombre').value.trim();
+  const rol    = document.getElementById('nuevoRol').value.trim();
+  if (!nombre) return;
+  const res = await fetch('/api/proyectos/' + PROYECTO_ID + '/equipo', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ nombre, rol: rol || 'Prestador de Servicio Social' }),
+  });
+  if (res.ok) {
+    document.getElementById('nuevoNombre').value = '';
+    document.getElementById('nuevoRol').value = '';
+    cargarEquipo();
+  }
+}
+
+async function eliminarMiembro(id) {
+  if (!confirm('¿Eliminar este miembro del equipo?')) return;
+  await fetch('/api/equipo/' + id, { method: 'DELETE' });
+  cargarEquipo();
+}
+
+/* ── Métricas personalizadas ── */
+async function cargarCampos() {
+  const res = await fetch('/api/proyectos/' + PROYECTO_ID);
+  const p   = await res.json();
+  renderCampos(p.campos || []);
+}
+
+function renderCampos(campos) {
+  const lista = document.getElementById('camposLista');
+  if (!campos.length) {
+    lista.innerHTML = '<p style="color:#888780;font-size:13px;">Sin métricas personalizadas.</p>';
+    return;
+  }
+  lista.innerHTML = campos.map(c => `
+    <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:8px;padding:8px 12px;">
+      <div style="flex:1;">
+        <span style="font-size:14px;font-weight:600;">${c.nombre}</span>
+        <span style="font-size:12px;color:#888780;margin-left:8px;">${c.tipo === 'numero' ? '🔢 Número' : '📝 Texto'}${c.unidad ? ' · ' + c.unidad : ''}</span>
+      </div>
+      <button onclick="eliminarCampo(${c.id})" style="background:none;border:none;color:#D85A30;cursor:pointer;font-size:18px;line-height:1;padding:0 4px;">×</button>
+    </div>`).join('');
+}
+
+async function agregarCampo() {
+  const nombre = document.getElementById('campNombre').value.trim();
+  const tipo   = document.getElementById('campTipo').value;
+  const unidad = document.getElementById('campUnidad').value.trim();
+  if (!nombre) return;
+  const res = await fetch('/api/proyectos/' + PROYECTO_ID + '/campos', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ nombre, tipo, unidad }),
+  });
+  if (res.ok) {
+    document.getElementById('campNombre').value = '';
+    document.getElementById('campUnidad').value = '';
+    cargarCampos();
+  }
+}
+
+async function eliminarCampo(id) {
+  if (!confirm('¿Eliminar esta métrica? Se perderán los valores ya registrados.')) return;
+  await fetch('/api/campos/' + id, { method: 'DELETE' });
+  cargarCampos();
+}
+
+/* Inicializar al cargar */
+cargarEquipo();
+cargarCampos();
+</script>
+</body>
+</html>

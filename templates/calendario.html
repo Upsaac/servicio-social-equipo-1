@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Solidaria — Calendario</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calendario.css') }}">
+</head>
+<body>
+<div class="dash">
+  {% include 'sidebar.html' %}
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2>Calendario Global de Actividades</h2>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-nav" id="btnPrevMes">‹ Anterior</button>
+        <span id="mesLabel" style="font-weight:600;font-size:15px;padding:0 12px;"></span>
+        <button class="btn-nav" id="btnNextMes">Siguiente ›</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="calendar-layout">
+
+        <div class="cal-left-panel">
+          <h3 class="panel-title">Filtros</h3>
+          <div class="filter-group">
+            <h4 class="filter-subtitle">Proyecto</h4>
+            <select class="filter-dropdown full-width" id="filterProyecto">
+              <option value="">Todos los proyectos</option>
+              {% for p in proyectos %}
+              <option value="{{ p.id }}">{{ p.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-group" style="margin-top:16px;">
+            <h3 class="panel-title">Próximas actividades</h3>
+            <ul class="milestones-list" id="proximasList">
+              <li style="color:#888780;font-size:13px;">Cargando...</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cal-center-panel">
+          <div class="calendar-grid-container">
+            <div class="cal-header-row">
+              <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div>
+              <div>Jue</div><div>Vie</div><div>Sáb</div>
+            </div>
+            <div class="cal-days-grid" id="calGrid"></div>
+          </div>
+        </div>
+
+        <div class="cal-right-panel">
+          <h3 class="panel-title">Detalle del evento</h3>
+          <div id="eventDetails" class="event-details-card">
+            <p style="color:#888780;font-size:13px;">Haz clic en un evento del calendario para ver su detalle.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script src="{{ url_for('static', filename='js/calendario.js') }}"></script>
+</body>
+</html>

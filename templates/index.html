@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huella Solidaria</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:#F1EFE8;color:#2C2C2A;}
+
+    /* Navbar pública */
+    .pub-nav{background:#185FA5;display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;position:sticky;top:0;z-index:100;}
+    .pub-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .pub-nav-logo{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:22px;height:22px;}
+    .pub-nav-logo span{border-radius:2px;}
+    .pub-nav-name{color:#fff;font-weight:600;font-size:16px;}
+    .pub-nav-links{display:flex;align-items:center;gap:8px;}
+    .pub-nav-link{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:6px;transition:background .15s;}
+    .pub-nav-link:hover{background:rgba(255,255,255,.12);color:#fff;}
+    .pub-nav-link.active{color:#fff;background:rgba(255,255,255,.15);}
+    .pub-nav-btn{background:#EF9F27;color:#fff;text-decoration:none;font-size:13px;font-weight:600;padding:7px 16px;border-radius:6px;}
+    .pub-nav-btn:hover{background:#d98e1e;}
+
+    /* Hero */
+    .pub-hero{background:linear-gradient(135deg,#185FA5 0%,#0e4278 100%);color:#fff;padding:64px 28px 48px;text-align:center;}
+    .pub-hero h1{font-size:32px;font-weight:600;margin-bottom:12px;}
+    .pub-hero p{font-size:16px;color:rgba(255,255,255,.8);max-width:520px;margin:0 auto 28px;line-height:1.6;}
+    .pub-hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .pub-btn-primary{background:#EF9F27;color:#fff;text-decoration:none;padding:11px 24px;border-radius:8px;font-weight:600;font-size:14px;}
+    .pub-btn-secondary{background:rgba(255,255,255,.15);color:#fff;text-decoration:none;padding:11px 24px;border-radius:8px;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,.3);}
+    .pub-btn-primary:hover{background:#d98e1e;}
+    .pub-btn-secondary:hover{background:rgba(255,255,255,.25);}
+
+    /* Proyectos */
+    .pub-section{max-width:1100px;margin:0 auto;padding:40px 24px;}
+    .pub-section-title{font-size:20px;font-weight:600;margin-bottom:20px;color:#2C2C2A;}
+    .pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+    .pub-card{background:#fff;border-radius:12px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #f1f1ee;overflow:hidden;transition:transform .15s,box-shadow .15s;text-decoration:none;color:inherit;display:block;}
+    .pub-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
+    .pub-card-img{width:100%;height:110px;object-fit:cover;}
+    .pub-card-body{padding:16px;}
+    .pub-ods{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+    .pub-card h3{font-size:15px;font-weight:600;margin:0 0 6px;}
+    .pub-card p{font-size:13px;color:#5F5E5A;margin:0 0 10px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+    .pub-meta{font-size:12px;color:#888780;}
+
+    /* Stats */
+    .pub-stats{background:#fff;border-radius:12px;padding:24px;display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin:0 24px 32px;max-width:1100px;margin-left:auto;margin-right:auto;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+    .pub-stat{text-align:center;}
+    .pub-stat-num{font-size:28px;font-weight:600;color:#185FA5;}
+    .pub-stat-label{font-size:13px;color:#888780;margin-top:2px;}
+
+    /* Footer */
+    .pub-footer{text-align:center;padding:28px;color:#888780;font-size:13px;border-top:1px solid #e8e6e0;margin-top:32px;}
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="pub-nav">
+    <a href="/" class="pub-nav-brand">
+      <div class="pub-nav-logo">
+        <span style="background:#1D9E75;"></span>
+        <span style="background:rgba(255,255,255,.5);"></span>
+        <span style="background:#D85A30;"></span>
+        <span style="background:#7F77DD;"></span>
+      </div>
+      <span class="pub-nav-name">Huella Solidaria</span>
+    </a>
+    <div class="pub-nav-links">
+      <a href="/proyectos" class="pub-nav-link">Proyectos</a>
+      <a href="/lideres" class="pub-nav-link">Líderes</a>
+      <a href="/login" class="pub-nav-btn">Iniciar sesión</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="pub-hero">
+    <h1>Proyectos de Servicio Social</h1>
+    <p>Conoce las iniciativas de impacto social del Tec de Monterrey Campus Puebla y el trabajo de sus líderes en la comunidad.</p>
+    <div class="pub-hero-btns">
+      <a href="/proyectos" class="pub-btn-primary">Ver todos los proyectos</a>
+      <a href="/lideres" class="pub-btn-secondary">Conocer a los líderes</a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="pub-stats" id="pubStats" style="display:none;">
+    <div class="pub-stat"><div class="pub-stat-num" id="statProyectos">—</div><div class="pub-stat-label">Proyectos activos</div></div>
+    <div class="pub-stat"><div class="pub-stat-num" id="statBeneficiarios">—</div><div class="pub-stat-label">Beneficiarios</div></div>
+    <div class="pub-stat"><div class="pub-stat-num" id="statLideres">—</div><div class="pub-stat-label">Líderes</div></div>
+  </div>
+
+  <!-- Proyectos destacados -->
+  <div class="pub-section">
+    <p class="pub-section-title">Proyectos destacados</p>
+    <div class="pub-grid" id="proyectosPublicos">
+      <p style="color:#888780;font-size:14px;">Cargando proyectos...</p>
+    </div>
+  </div>
+
+  <footer class="pub-footer">
+    Tec de Monterrey Campus Puebla · Servicio Social ·
+    <a href="/login" style="color:#185FA5;">Acceso colaboradores</a>
+  </footer>
+
+  <script>
+  (async function() {
+    try {
+      const res = await fetch('/api/proyectos');
+      const proyectos = await res.json();
+      const grid = document.getElementById('proyectosPublicos');
+
+      if (!proyectos.length) {
+        grid.innerHTML = '<p style="color:#888780;font-size:14px;">No hay proyectos activos.</p>';
+        return;
+      }
+
+      /* Stats */
+      const totalBen = proyectos.reduce((s, p) => s + (p.beneficiarios || 0), 0);
+      const lideresSet = new Set(proyectos.map(p => p.lider && p.lider.id).filter(Boolean));
+      document.getElementById('statProyectos').textContent = proyectos.length;
+      document.getElementById('statBeneficiarios').textContent = totalBen.toLocaleString('es-MX');
+      document.getElementById('statLideres').textContent = lideresSet.size;
+      document.getElementById('pubStats').style.display = 'flex';
+
+      /* Cards — máx 6 en el inicio */
+      grid.innerHTML = proyectos.slice(0, 6).map(p => {
+        const ods   = p.ods[0];
+        const color = ods ? ods.color : '#185FA5';
+        const badge = ods
+          ? `<span class="pub-ods" style="background:${color}18;color:${color};">ODS ${ods.numero} — ${ods.nombre}</span>`
+          : '';
+        const img = p.imagen_url
+          ? `<img src="${p.imagen_url}" class="pub-card-img" onerror="this.style.display='none'">`
+          : `<div style="height:6px;background:${color};"></div>`;
+        return `<a href="/proyectos/${p.id}" class="pub-card">
+          ${img}
+          <div class="pub-card-body">
+            ${badge}
+            <h3>${p.nombre}</h3>
+            <p>${p.descripcion || ''}</p>
+            <div class="pub-meta">📍 ${p.ubicacion || '—'} · 👤 ${p.lider ? p.lider.nombre : '—'}</div>
+          </div>
+        </a>`;
+      }).join('');
+
+      if (proyectos.length > 6) {
+        grid.insertAdjacentHTML('afterend',
+          `<div style="text-align:center;margin-top:24px;">
+            <a href="/proyectos" style="color:#185FA5;font-weight:600;font-size:14px;">
+              Ver los ${proyectos.length} proyectos →
+            </a>
+          </div>`);
+      }
+    } catch(e) { console.error(e); }
+  })();
+  </script>
+</body>
+</html>
