@@ -21,9 +21,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   try {
-    const res     = await fetch(`/api/proyectos/${PROYECTO_ID}`);
-    const p       = await res.json();
-    const isAdmin = window._hsUser && window._hsUser.rol === 'admin';
+    const [proyRes, metGlobRes] = await Promise.all([
+      fetch(`/api/proyectos/${PROYECTO_ID}`),
+      fetch(`/api/proyectos/${PROYECTO_ID}/metricas-globales`),
+    ]);
+    const p           = await proyRes.json();
+    const metGlobales = await metGlobRes.json();
+    const isAdmin     = window._hsUser && window._hsUser.rol === 'admin';
     const puedeEditar = isAdmin || (typeof ES_LIDER_DUENO !== 'undefined' && ES_LIDER_DUENO);
 
     /* Header */
@@ -46,33 +50,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       estadoBadge.className   = `badge ${ESTADOS_CLASS[p.estado] || 'badge-warning'}`;
     }
 
-    /* Controles de edición */
-    if (puedeEditar) {
-      const editBtn = document.getElementById('btnEditar');
-      if (editBtn) editBtn.style.display = '';
-      const accionesPanel = document.getElementById('accionesLider');
-      if (accionesPanel) accionesPanel.style.display = '';
-    }
-
-    if (isAdmin) {
-      const controls   = document.getElementById('estadoControls');
-      const selectEl   = document.getElementById('selectEstado');
-      const btnCambiar = document.getElementById('btnCambiarEstado');
-      if (controls) controls.style.display = 'flex';
-      if (selectEl) selectEl.value = p.estado;
-      if (btnCambiar) {
-        btnCambiar.addEventListener('click', async () => {
-          const r = await fetch(`/api/proyectos/${PROYECTO_ID}/estado`, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ estado: selectEl.value }),
-          });
-          if (r.ok && estadoBadge) {
-            estadoBadge.textContent = ESTADOS_LABEL[selectEl.value];
-            estadoBadge.className   = `badge ${ESTADOS_CLASS[selectEl.value]}`;
-          }
+    /* Estado (controles solo presentes en DOM si admin via Jinja2) */
+    const selectEl   = document.getElementById('selectEstado');
+    const btnCambiar = document.getElementById('btnCambiarEstado');
+    if (selectEl) selectEl.value = p.estado;
+    if (btnCambiar) {
+      btnCambiar.addEventListener('click', async () => {
+        const r = await fetch(`/api/proyectos/${PROYECTO_ID}/estado`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ estado: selectEl.value }),
         });
-      }
+        if (r.ok && estadoBadge) {
+          estadoBadge.textContent = ESTADOS_LABEL[selectEl.value];
+          estadoBadge.className   = `badge ${ESTADOS_CLASS[selectEl.value]}`;
+        }
+      });
     }
 
     /* KPIs */
@@ -101,6 +94,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* Equipo */
     renderEquipoDetalle(p);
+
+    /* Métricas KPI */
+    renderMetricasKpi(p.campos || [], metGlobales, puedeEditar);
 
   } catch (e) {
     console.error('proyecto-detalle.js', e);
@@ -262,4 +258,121 @@ async function moderarTestimonio(id, estado) {
     body: JSON.stringify({ estado }),
   });
   if (res.ok) cargarTestimonios();
+}
+
+/* ── Métricas KPI (campos personalizados + métricas globales) ── */
+const KPI_COLORS = [
+  { bg: '#E6F1FB', color: '#185FA5' },
+  { bg: '#E1F5EE', color: '#1D9E75' },
+  { bg: '#FAEEDA', color: '#EF9F27' },
+  { bg: '#EEEDFE', color: '#7F77DD' },
+  { bg: '#FAECE7', color: '#D85A30' },
+];
+
+function renderMetricasKpi(campos, metGlobales, puedeEditar) {
+  const section = document.getElementById('metricasKpiSection');
+  const grid    = document.getElementById('metricasKpiGrid');
+  if (!section || !grid) return;
+
+  const items = [
+    ...campos.map(c => ({
+      id: c.id, nombre: c.nombre, tipo: c.tipo,
+      unidad: c.unidad, valor: c.valor, esGlobal: false,
+    })),
+    ...metGlobales.map(m => ({
+      id: m.id, nombre: m.nombre, tipo: m.tipo,
+      unidad: m.unidad, valor: m.valor, esGlobal: true,
+    })),
+  ];
+
+  if (!items.length) return;
+  section.style.display = '';
+
+  grid.innerHTML = items.map((item, i) => {
+    const pal        = KPI_COLORS[i % KPI_COLORS.length];
+    const valorStr   = item.valor !== null && item.valor !== undefined
+      ? `${item.valor}${item.unidad ? ' ' + item.unidad : ''}`
+      : '—';
+    const editBtn = puedeEditar
+      ? `<button onclick="abrirEditarMetrica(${item.id},'${escHtml(item.nombre)}','${item.tipo}',${item.esGlobal ? 1 : 0})"
+           style="margin-top:8px;background:transparent;border:1px solid ${pal.color}40;
+                  color:${pal.color};border-radius:6px;padding:3px 10px;font-size:11px;
+                  cursor:pointer;font-family:inherit;">Actualizar</button>`
+      : '';
+    const tag = item.esGlobal
+      ? `<span style="font-size:10px;background:${pal.bg};color:${pal.color};padding:1px 7px;border-radius:20px;font-weight:600;">Global</span>`
+      : '';
+    return `<div class="kpi-card" id="kpi-item-${item.esGlobal ? 'g' : 'c'}${item.id}">
+      <div class="kpi-info">
+        <div class="kpi-label" style="display:flex;align-items:center;gap:6px;">${escHtml(item.nombre)} ${tag}</div>
+        <div class="kpi-value" style="font-size:22px;" id="kpi-val-${item.esGlobal ? 'g' : 'c'}${item.id}">${valorStr}</div>
+        ${editBtn}
+      </div>
+      <div class="kpi-icon" style="background:${pal.bg};color:${pal.color};">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+          <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+        </svg>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function abrirEditarMetrica(id, nombre, tipo, esGlobal) {
+  const actual = document.getElementById(`kpi-val-${esGlobal ? 'g' : 'c'}${id}`);
+  const valStr = (actual && actual.textContent !== '—')
+    ? actual.textContent.replace(/[^0-9.\-]/g, '')
+    : '';
+
+  const input = tipo === 'numero'
+    ? `<input type="number" id="metricaInputVal" value="${valStr}" step="any"
+         style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px;width:160px;font-family:inherit;">`
+    : `<input type="text" id="metricaInputVal" value="${valStr}"
+         style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px;width:220px;font-family:inherit;">`;
+
+  const modal = document.createElement('div');
+  modal.id = 'metricaModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:12px;padding:28px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+      <h3 style="font-size:15px;font-weight:600;color:#2C2C2A;margin:0 0 16px;">Actualizar: ${escHtml(nombre)}</h3>
+      <div style="margin-bottom:16px;">${input}</div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="guardarValorMetrica(${id},${esGlobal})"
+          style="background:#1D9E75;color:#fff;padding:9px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;font-size:14px;">
+          Guardar
+        </button>
+        <button onclick="document.getElementById('metricaModal').remove()"
+          style="background:#f1f5f9;color:#2C2C2A;padding:9px 20px;border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;font-family:inherit;font-size:14px;">
+          Cancelar
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('metricaInputVal').focus();
+}
+
+async function guardarValorMetrica(id, esGlobal) {
+  const inputEl = document.getElementById('metricaInputVal');
+  const valor   = inputEl ? inputEl.value : '';
+  const url = esGlobal
+    ? `/api/proyectos/${PROYECTO_ID}/metricas-globales/${id}/valor`
+    : `/api/proyectos/${PROYECTO_ID}/campos/${id}/valor`;
+  const res  = await fetch(url, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ valor }),
+  });
+  const data = await res.json();
+  if (data.ok) {
+    const kpiEl = document.getElementById(`kpi-val-${esGlobal ? 'g' : 'c'}${id}`);
+    if (kpiEl) {
+      kpiEl.textContent = data.valor !== null && data.valor !== undefined ? data.valor : '—';
+    }
+    document.getElementById('metricaModal').remove();
+  } else {
+    alert('Error al guardar el valor.');
+  }
 }

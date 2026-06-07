@@ -25,7 +25,9 @@
           </svg>
           <input type="text" placeholder="Buscar proyectos, líderes, lugares..." />
         </div>
+        {% if current_user.is_authenticated and current_user.rol == 'admin' %}
         <button id="btnNuevoProyecto" class="btn-new" onclick="window.location.href='/crear-proyecto'">+ Nuevo proyecto</button>
+        {% endif %}
       </div>
     </div>
 

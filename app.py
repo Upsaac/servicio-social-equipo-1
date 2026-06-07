@@ -2,10 +2,14 @@ import os
 from flask import Flask
 from extensions import db, login_manager
 
+# En producción define la variable de entorno SECRET_KEY con una cadena aleatoria segura.
+# Si no está definida, se usa el valor de desarrollo (solo aceptable en local).
+_DEV_SECRET = 'hs-dev-secret-2026-change-in-prod'
+
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'hs-dev-secret-2026-change-in-prod'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', _DEV_SECRET)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
@@ -28,6 +32,7 @@ def create_app():
     from routes.beneficiarios import bp as beneficiarios_bp
     from routes.dashboard import bp as dashboard_bp
     from routes.testimonios import bp as testimonios_bp
+    from routes.metricas import bp as metricas_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(proyectos_bp)
@@ -35,6 +40,7 @@ def create_app():
     app.register_blueprint(beneficiarios_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(testimonios_bp)
+    app.register_blueprint(metricas_bp)
 
     with app.app_context():
         db.create_all()
@@ -45,5 +51,5 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    # Al pasar '0.0.0.0', abres el socket a la LAN
-    app.run(host='0.0.0.0', port=8022, debug=True)
+    debug = os.environ.get('FLASK_DEBUG', 'true').lower() == 'true'
+    app.run(host='0.0.0.0', port=8022, debug=debug)

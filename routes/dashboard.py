@@ -1,8 +1,24 @@
+import re
 from flask import Blueprint, jsonify, render_template, request, abort
 from flask_login import login_required, current_user
 from sqlalchemy import func
 from extensions import db
-from models import Proyecto, Usuario, Actividad, ReporteBeneficiarios, ODS, get_config
+from models import Proyecto, Usuario, Actividad, ReporteBeneficiarios, ODS, get_config, MetricaGlobal, ValorMetricaGlobal
+
+
+def _to_youtube_embed(url: str) -> str:
+    """Convert any YouTube URL format to embed format."""
+    if not url:
+        return url
+    if 'youtube.com/embed/' in url:
+        return url
+    m = re.match(r'https?://youtu\.be/([^?&]+)', url)
+    if m:
+        return f'https://www.youtube.com/embed/{m.group(1)}'
+    m = re.search(r'[?&]v=([^&]+)', url)
+    if m:
+        return f'https://www.youtube.com/embed/{m.group(1)}'
+    return url
 
 bp = Blueprint('dashboard', __name__)
 
@@ -19,7 +35,7 @@ def index():
 def dashboard_page():
     config = get_config()
     return render_template('dashboard.html', active_page='dashboard',
-                           video_url=config.video_url)
+                           video_url=config.video_url, config=config)
 
 
 @bp.route('/configuracion')
@@ -38,8 +54,12 @@ def api_guardar_config():
         abort(403)
     data   = request.get_json()
     config = get_config()
-    if 'video_url' in data:
-        config.video_url = data['video_url']
+    for campo in ('video_url', 'video_titulo', 'video_descripcion'):
+        if campo in data:
+            valor = data[campo]
+            if campo == 'video_url':
+                valor = _to_youtube_embed(valor)
+            setattr(config, campo, valor)
     db.session.commit()
     return jsonify({'ok': True})
 
@@ -94,6 +114,27 @@ def api_dashboard():
                                                        'count': 0})
             ods_counts[o.id]['count'] += 1
 
+    metricas_globales = []
+    for m in MetricaGlobal.query.order_by(MetricaGlobal.nombre).all():
+        valores_por_proyecto = []
+        for p in m.proyectos:
+            v = ValorMetricaGlobal.query.filter_by(metrica_id=m.id, proyecto_id=p.id).first()
+            color = p.ods[0].color_hex if p.ods else '#185FA5'
+            valores_por_proyecto.append({
+                'proyecto_id':     p.id,
+                'proyecto_nombre': p.nombre,
+                'color':           color,
+                'valor': (v.valor_numero if m.tipo == 'numero' else v.valor_texto) if v else None,
+            })
+        total = sum(
+            (e['valor'] or 0) for e in valores_por_proyecto if e['valor'] is not None
+        ) if m.tipo == 'numero' else None
+        metricas_globales.append({
+            'id': m.id, 'nombre': m.nombre, 'tipo': m.tipo,
+            'unidad': m.unidad or '', 'total_global': total,
+            'valores_por_proyecto': valores_por_proyecto,
+        })
+
     return jsonify({
         'proyectos_activos': len(proyectos_activos_q),
         'total_beneficiarios': total_beneficiarios,
@@ -102,4 +143,5 @@ def api_dashboard():
         'zonas_intervencion': len(zonas),
         'proyectos': proyectos_data,
         'ods_impactados': list(ods_counts.values()),
+        'metricas_globales': metricas_globales,
     })

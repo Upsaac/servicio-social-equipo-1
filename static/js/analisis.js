@@ -85,6 +85,103 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
+    /* ── Métricas globales ── */
+    const metGlobales = (data.metricas_globales || []).filter(m => m.tipo === 'numero');
+    if (metGlobales.length) {
+      const section  = document.getElementById('metricasGlobalesSection');
+      const kpiGrid  = document.getElementById('metricasGlobalesKpi');
+      const chartsEl = document.getElementById('metricasGlobalesCharts');
+      if (section) section.style.display = '';
+
+      const KPI_PALETTES = [
+        { bg: '#E6F1FB', color: '#185FA5', iconBg: 'icon-blue-light' },
+        { bg: '#E1F5EE', color: '#1D9E75', iconBg: 'icon-green-light' },
+        { bg: '#FAEEDA', color: '#EF9F27', iconBg: 'icon-yellow-light' },
+        { bg: '#EEEDFE', color: '#7F77DD', iconBg: 'icon-purple-light' },
+      ];
+
+      /* KPI cards */
+      if (kpiGrid) {
+        kpiGrid.innerHTML = metGlobales.map((m, i) => {
+          const pal   = KPI_PALETTES[i % KPI_PALETTES.length];
+          const total = m.total_global !== null && m.total_global !== undefined
+            ? m.total_global.toLocaleString('es-MX') + (m.unidad ? ' ' + m.unidad : '')
+            : '—';
+          return `<div class="kpi-card-simple">
+            <p class="kpi-title">${m.nombre}</p>
+            <h3 class="kpi-val-large" style="color:${pal.color};">${total}</h3>
+            <p class="kpi-sub" style="color:${pal.color};">total global</p>
+            <div class="kpi-icon-bottom ${pal.iconBg}">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+              </svg>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      /* Gráficas dinámicas por métrica */
+      if (chartsEl) {
+        metGlobales.forEach(m => {
+          const conValor = (m.valores_por_proyecto || []).filter(v => v.valor !== null && v.valor !== undefined);
+          if (!conValor.length) return;
+
+          /* Barra: distribución por proyecto */
+          const boxBar = document.createElement('div');
+          boxBar.className = 'chart-box';
+          const canvasBar = document.createElement('canvas');
+          canvasBar.style.maxHeight = '280px';
+          boxBar.innerHTML = `<h4 class="chart-title">Distribución de ${m.nombre} por proyecto${m.unidad ? ' (' + m.unidad + ')' : ''}</h4>`;
+          boxBar.appendChild(canvasBar);
+          chartsEl.appendChild(boxBar);
+
+          new Chart(canvasBar, {
+            type: 'bar',
+            data: {
+              labels: conValor.map(v => v.proyecto_nombre.length > 20 ? v.proyecto_nombre.slice(0, 20) + '…' : v.proyecto_nombre),
+              datasets: [{
+                label: m.nombre,
+                data:  conValor.map(v => v.valor),
+                backgroundColor: conValor.map(v => v.color || '#185FA5'),
+                borderRadius: 6,
+              }],
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: { y: { beginAtZero: true } },
+            },
+          });
+
+          /* Dona: distribución porcentual si ≥3 proyectos con valor */
+          if (conValor.length >= 3) {
+            const boxDona = document.createElement('div');
+            boxDona.className = 'chart-box';
+            const canvasDona = document.createElement('canvas');
+            canvasDona.style.cssText = 'max-height:280px;max-width:280px;margin:0 auto;display:block;';
+            boxDona.innerHTML = `<h4 class="chart-title">${m.nombre} por proyecto (%)</h4>`;
+            boxDona.appendChild(canvasDona);
+            chartsEl.appendChild(boxDona);
+
+            new Chart(canvasDona, {
+              type: 'doughnut',
+              data: {
+                labels: conValor.map(v => v.proyecto_nombre.length > 22 ? v.proyecto_nombre.slice(0, 22) + '…' : v.proyecto_nombre),
+                datasets: [{
+                  data:            conValor.map(v => v.valor),
+                  backgroundColor: conValor.map(v => v.color || '#185FA5'),
+                }],
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+              },
+            });
+          }
+        });
+      }
+    }
+
   } catch (e) {
     console.error('analisis.js', e);
   }

@@ -26,31 +26,33 @@
             </svg>
             <input type="text" placeholder="Buscar proyectos, líderes, lugares..." />
           </div>
+          {% if current_user.is_authenticated and current_user.rol == 'admin' %}
           <button id="btnNuevoProyecto" class="btn-new" onclick="window.location.href='/crear-proyecto'">+ Nuevo proyecto</button>
+          {% endif %}
         </div>
       </header>
 
       <div class="content">
 
         <div class="video-banner">
-          <div class="video-thumb" id="videoThumb" style="overflow:hidden;border-radius:8px;">
+          <div class="video-thumb" id="videoThumb">
             {% if video_url %}
               <iframe src="{{ video_url }}" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen style="width:100%;height:100%;min-height:200px;border-radius:8px;">
+                allowfullscreen>
               </iframe>
             {% else %}
-              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:180px;gap:8px;">
+              <div class="video-empty">
                 <span style="color:#888780;font-size:14px;">Video no configurado</span>
-                {% if current_user.rol == 'admin' %}
+                {% if current_user.is_authenticated and current_user.rol == 'admin' %}
                 <a href="/configuracion" style="color:#185FA5;font-size:13px;font-weight:600;">⚙ Configurar video →</a>
                 {% endif %}
               </div>
             {% endif %}
           </div>
           <div class="video-info">
-            <h2>Video de Presentación</h2>
-            <p>Conoce nuestra misión, visión y los diversos proyectos que apoyamos. Tu participación es clave para generar un cambio real en las comunidades.</p>
+            <h2>{{ config.video_titulo or 'Video de Presentación' }}</h2>
+            <p>{{ config.video_descripcion or 'Conoce nuestra misión, visión y los diversos proyectos que apoyamos.' }}</p>
           </div>
         </div>
 

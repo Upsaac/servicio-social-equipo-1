@@ -72,6 +72,25 @@
         <button class="btn-save" onclick="guardarPerfil()">Guardar cambios</button>
         <div class="success-msg" id="successMsg">¡Perfil actualizado correctamente!</div>
       </div>
+
+      <div class="perfil-card" style="margin-top:20px;">
+        <h3 style="font-size:15px;font-weight:600;color:#2C2C2A;margin:0 0 20px;">Cambiar contraseña</h3>
+        <div class="form-group">
+          <label class="form-label">Contraseña actual</label>
+          <input type="password" id="pwActual" class="form-input" placeholder="Tu contraseña actual">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña</label>
+          <input type="password" id="pwNueva" class="form-input" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar nueva contraseña</label>
+          <input type="password" id="pwConfirm" class="form-input" placeholder="Repite la nueva contraseña">
+        </div>
+        <button class="btn-save" onclick="cambiarPassword()">Actualizar contraseña</button>
+        <div class="success-msg" id="pwSuccessMsg">¡Contraseña actualizada correctamente!</div>
+        <div id="pwErrorMsg" style="display:none;background:#FEE2E2;color:#991B1B;border-radius:8px;padding:10px 14px;font-size:14px;margin-top:12px;"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -147,6 +166,43 @@ async function guardarPerfil() {
 }
 
 cargarPerfil();
+
+async function cambiarPassword() {
+  const actual   = document.getElementById('pwActual').value;
+  const nueva    = document.getElementById('pwNueva').value;
+  const confirm  = document.getElementById('pwConfirm').value;
+  const okMsg    = document.getElementById('pwSuccessMsg');
+  const errMsg   = document.getElementById('pwErrorMsg');
+  okMsg.style.display  = 'none';
+  errMsg.style.display = 'none';
+
+  if (nueva !== confirm) {
+    errMsg.textContent   = 'Las contraseñas nuevas no coinciden.';
+    errMsg.style.display = 'block';
+    return;
+  }
+  try {
+    const res  = await fetch('/api/perfil/password', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ password_actual: actual, password_nueva: nueva }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      okMsg.style.display = 'block';
+      document.getElementById('pwActual').value  = '';
+      document.getElementById('pwNueva').value   = '';
+      document.getElementById('pwConfirm').value = '';
+      setTimeout(() => okMsg.style.display = 'none', 3000);
+    } else {
+      errMsg.textContent   = data.error || 'Error al cambiar contraseña.';
+      errMsg.style.display = 'block';
+    }
+  } catch {
+    errMsg.textContent   = 'Error de conexión. Intenta de nuevo.';
+    errMsg.style.display = 'block';
+  }
+}
 </script>
 </body>
 </html>

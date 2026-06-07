@@ -72,8 +72,7 @@ class Proyecto(db.Model):
     def beneficiarios_totales(self):
         if not self.reportes:
             return 0
-        latest = max(self.reportes, key=lambda r: r.created_at)
-        return latest.total
+        return sum(r.total for r in self.reportes)
 
     def avance_pct(self):
         if not self.meta_beneficiarios:
@@ -110,10 +109,7 @@ class Proyecto(db.Model):
                 for o in self.ods
             ],
             'equipo': [{'id': m.id, 'nombre': m.nombre, 'rol': m.rol} for m in self.equipo],
-            'campos': [
-                {'id': c.id, 'nombre': c.nombre, 'tipo': c.tipo, 'unidad': c.unidad}
-                for c in self.campos
-            ],
+            'campos': [c.to_dict() for c in self.campos],
             'beneficiarios': self.beneficiarios_totales(),
             'avance_pct': self.avance_pct(),
         }
@@ -164,6 +160,23 @@ class CampoPersonalizado(db.Model):
     valores     = db.relationship(
         'ValorMetrica', backref='campo', lazy=True, cascade='all, delete-orphan'
     )
+    valor_proyecto = db.relationship(
+        'ValorCampoProyecto', backref='campo', uselist=False, lazy=True, cascade='all, delete-orphan'
+    )
+
+    def valor_actual(self):
+        if self.valor_proyecto is None:
+            return None
+        return self.valor_proyecto.valor_numero if self.tipo == 'numero' else self.valor_proyecto.valor_texto
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'tipo': self.tipo,
+            'unidad': self.unidad or '',
+            'valor': self.valor_actual(),
+        }
 
 
 class ValorMetrica(db.Model):
@@ -214,17 +227,87 @@ class Actividad(db.Model):
 
 class Configuracion(db.Model):
     __tablename__ = 'configuracion'
-    id        = db.Column(db.Integer, primary_key=True)
-    video_url = db.Column(db.Text, default='')
+    id                = db.Column(db.Integer, primary_key=True)
+    video_url         = db.Column(db.Text, default='')
+    video_titulo      = db.Column(db.Text, default='Video de Presentación')
+    video_descripcion = db.Column(db.Text, default='Conoce nuestra misión, visión y los diversos proyectos que apoyamos. Tu participación es clave para generar un cambio real en las comunidades.')
 
 
 def get_config():
     c = Configuracion.query.get(1)
     if not c:
-        c = Configuracion(id=1, video_url='')
+        c = Configuracion(id=1, video_url='', video_titulo='Video de Presentación',
+                          video_descripcion='Conoce nuestra misión, visión y los diversos proyectos que apoyamos. Tu participación es clave para generar un cambio real en las comunidades.')
         db.session.add(c)
         db.session.commit()
     return c
+
+
+class ValorCampoProyecto(db.Model):
+    __tablename__ = 'valor_campo_proyecto'
+    id           = db.Column(db.Integer, primary_key=True)
+    campo_id     = db.Column(db.Integer, db.ForeignKey('campo_personalizado.id'), nullable=False, unique=True)
+    valor_texto  = db.Column(db.Text)
+    valor_numero = db.Column(db.Float)
+    updated_at   = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+# ── Métricas globales (definidas por admin, asignadas a proyectos) ─────────────
+
+proyecto_metrica_global = db.Table(
+    'proyecto_metrica_global',
+    db.Column('proyecto_id', db.Integer, db.ForeignKey('proyecto.id'), primary_key=True),
+    db.Column('metrica_id',  db.Integer, db.ForeignKey('metrica_global.id'), primary_key=True),
+)
+
+
+class MetricaGlobal(db.Model):
+    __tablename__ = 'metrica_global'
+    id          = db.Column(db.Integer, primary_key=True)
+    nombre      = db.Column(db.Text, nullable=False)
+    tipo        = db.Column(db.Text, nullable=False, default='numero')
+    unidad      = db.Column(db.Text)
+    descripcion = db.Column(db.Text)
+    created_at  = db.Column(db.DateTime, default=datetime.utcnow)
+    proyectos   = db.relationship('Proyecto', secondary=proyecto_metrica_global, lazy='subquery')
+    valores     = db.relationship('ValorMetricaGlobal', backref='metrica', lazy=True, cascade='all, delete-orphan')
+
+    def total_global(self):
+        if self.tipo == 'numero':
+            return sum(v.valor_numero or 0 for v in self.valores)
+        return None
+
+    def to_dict(self, include_valores=False):
+        d = {
+            'id': self.id,
+            'nombre': self.nombre,
+            'tipo': self.tipo,
+            'unidad': self.unidad or '',
+            'descripcion': self.descripcion or '',
+            'proyectos_ids': [p.id for p in self.proyectos],
+            'total_global': self.total_global(),
+        }
+        if include_valores:
+            d['valores'] = [v.to_dict() for v in self.valores]
+        return d
+
+
+class ValorMetricaGlobal(db.Model):
+    __tablename__ = 'valor_metrica_global'
+    id           = db.Column(db.Integer, primary_key=True)
+    metrica_id   = db.Column(db.Integer, db.ForeignKey('metrica_global.id'), nullable=False)
+    proyecto_id  = db.Column(db.Integer, db.ForeignKey('proyecto.id'), nullable=False)
+    valor_numero = db.Column(db.Float)
+    valor_texto  = db.Column(db.Text)
+    updated_at   = db.Column(db.DateTime, default=datetime.utcnow)
+    __table_args__ = (db.UniqueConstraint('metrica_id', 'proyecto_id'),)
+
+    def to_dict(self):
+        return {
+            'metrica_id':  self.metrica_id,
+            'proyecto_id': self.proyecto_id,
+            'valor': self.valor_numero if self.metrica.tipo == 'numero' else self.valor_texto,
+        }
 
 
 class ReporteBeneficiarios(db.Model):

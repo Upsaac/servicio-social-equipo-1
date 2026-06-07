@@ -271,49 +271,38 @@ body {
   border-radius: 16px;
   border: 0.5px solid #D3D1C7;
   overflow: hidden;
-  min-height: 240px;
 }
 
+/* padding-top 56.25% = 9/16 → impone proporción 16:9
+   independientemente del estiramiento del grid padre   */
 .video-thumb {
+  position: relative;
+  overflow: hidden;
   background: #D3D1C7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 12px;
-  cursor: pointer;
+  min-height: 180px;
 }
 
-.play-btn {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.video-thumb::before {
+  content: '';
+  display: block;
+  padding-top: 56.25%;
+}
+
+.video-thumb iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   border: none;
-  cursor: pointer;
-  transition: transform 0.15s;
 }
 
-.play-btn:hover {
-  transform: scale(1.08);
-}
-
-.play-arrow {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 11px 0 11px 20px;
-  border-color: transparent transparent transparent #185FA5;
-  margin-left: 4px;
-}
-
-.video-thumb span {
-  font-size: 14px;
-  color: #5F5E5A;
-  font-weight: 500;
+.video-empty {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .video-info {

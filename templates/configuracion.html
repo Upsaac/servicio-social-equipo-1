@@ -8,18 +8,44 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
   <style>
-    .config-card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:640px;border:1px solid #f1f5f9;}
+    .config-card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 8px rgba(0,0,0,.05);max-width:720px;border:1px solid #f1f5f9;margin-bottom:24px;}
     .config-section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid #f1f5f9;}
     .config-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
     .config-title{font-size:15px;font-weight:600;color:#2C2C2A;margin:0 0 4px;}
     .config-hint{font-size:13px;color:#888780;margin:0 0 14px;line-height:1.5;}
     .form-input{width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;}
     .form-input:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.1);}
+    textarea.form-input{resize:vertical;min-height:80px;}
     .btn-save{background:#1D9E75;color:#fff;padding:10px 22px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;font-size:14px;}
     .btn-save:hover{background:#158360;}
+    .btn-danger{background:#DC2626;color:#fff;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;font-size:13px;}
+    .btn-danger:hover{background:#B91C1C;}
+    .btn-secondary{background:#f1f5f9;color:#2C2C2A;padding:8px 16px;border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;font-size:13px;}
+    .btn-secondary:hover{background:#e2e8f0;}
     .success-msg{display:none;background:#D1FAE5;color:#065F46;border-radius:8px;padding:10px 14px;font-size:14px;margin-top:12px;}
+    .error-msg{display:none;background:#FEE2E2;color:#991B1B;border-radius:8px;padding:10px 14px;font-size:14px;margin-top:12px;}
     .preview-video{margin-top:12px;border-radius:8px;overflow:hidden;background:#f8fafc;}
     code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px;color:#185FA5;}
+    .form-row{margin-bottom:14px;}
+    .form-label{display:block;font-size:13px;font-weight:600;color:#5F5E5A;margin-bottom:6px;}
+    .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    /* Tabla de usuarios */
+    .user-table{width:100%;border-collapse:collapse;font-size:14px;}
+    .user-table th{text-align:left;padding:8px 12px;background:#f8fafc;color:#5F5E5A;font-weight:600;border-bottom:1px solid #e2e8f0;}
+    .user-table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+    .badge-rol{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+    .badge-admin{background:#E6F1FB;color:#185FA5;}
+    .badge-lider{background:#E1F5EE;color:#1D9E75;}
+    /* Métricas globales */
+    .metrica-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;background:#fafafa;}
+    .metrica-nombre{font-weight:600;font-size:14px;color:#2C2C2A;}
+    .metrica-meta{font-size:12px;color:#888780;margin-top:2px;}
+    .metrica-actions{display:flex;gap:8px;flex-shrink:0;}
+    .select-input{padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:14px;background:#fff;}
+    .proyectos-check{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+    .proyectos-check label{display:flex;align-items:center;gap:6px;font-size:13px;color:#5F5E5A;cursor:pointer;background:#f8fafc;padding:4px 10px;border-radius:20px;border:1px solid #e2e8f0;}
+    .proyectos-check input[type=checkbox]{cursor:pointer;}
+    #metricaForm{display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin-bottom:16px;}
   </style>
 </head>
 <body>
@@ -35,39 +61,151 @@
     </div>
 
     <div class="content">
-      <div class="config-card">
 
+      <!-- ── Sección: Video del dashboard ───────────────────────────── -->
+      <div class="config-card">
         <div class="config-section">
-          <p class="config-title">Video de presentación del dashboard</p>
-          <p class="config-hint">
-            Pega la URL de embed de YouTube. Ejemplo:<br>
-            <code>https://www.youtube.com/embed/dQw4w9WgXcQ</code><br>
-            Para obtenerla: en YouTube → Compartir → Insertar → copia solo la URL del <code>src</code>.
-          </p>
-          <input type="url" id="videoUrl" class="form-input"
-                 value="{{ config.video_url or '' }}"
-                 placeholder="https://www.youtube.com/embed/...">
+          <p class="config-title">Video de presentación</p>
+          <p class="config-hint">URL de embed de YouTube. Ejemplo: <code>https://www.youtube.com/embed/dQw4w9WgXcQ</code></p>
+
+          <div class="form-row">
+            <label class="form-label">URL del video</label>
+            <input type="url" id="videoUrl" class="form-input" value="{{ config.video_url or '' }}" placeholder="https://www.youtube.com/embed/...">
+          </div>
 
           <div id="previewVideo" class="preview-video" style="{% if config.video_url %}display:block{% else %}display:none{% endif %};">
             {% if config.video_url %}
             <iframe src="{{ config.video_url }}" frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media"
-              allowfullscreen style="width:100%;height:220px;display:block;">
-            </iframe>
+              allowfullscreen style="width:100%;height:220px;display:block;"></iframe>
             {% endif %}
           </div>
-
-          <button class="btn-save" style="margin-top:14px;" onclick="guardarConfig()">Guardar</button>
-          <div class="success-msg" id="successMsg">¡Configuración guardada correctamente!</div>
         </div>
 
+        <div class="config-section">
+          <p class="config-title">Texto junto al video</p>
+          <p class="config-hint">Título y descripción que aparecen al lado del video en el dashboard de inicio.</p>
+
+          <div class="form-row">
+            <label class="form-label">Título</label>
+            <input type="text" id="videoTitulo" class="form-input" value="{{ config.video_titulo or 'Video de Presentación' }}" placeholder="Título del video">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Descripción</label>
+            <textarea id="videoDescripcion" class="form-input">{{ config.video_descripcion or '' }}</textarea>
+          </div>
+        </div>
+
+        <button class="btn-save" onclick="guardarConfig()">Guardar configuración</button>
+        <div class="success-msg" id="configOk">¡Configuración guardada!</div>
+        <div class="error-msg" id="configErr"></div>
       </div>
+
+      <!-- ── Sección: Usuarios ──────────────────────────────────────── -->
+      <div class="config-card">
+        <p class="config-title" style="margin-bottom:16px;">Gestión de usuarios</p>
+
+        <div id="usuariosForm" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin-bottom:20px;">
+          <p style="font-size:14px;font-weight:600;color:#2C2C2A;margin:0 0 14px;">Crear nuevo usuario</p>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Nombre completo</label>
+              <input type="text" id="uNombre" class="form-input" placeholder="Nombre del usuario">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Matrícula (opcional)</label>
+              <input type="text" id="uMatricula" class="form-input" placeholder="A01234567">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Correo electrónico</label>
+              <input type="email" id="uEmail" class="form-input" placeholder="correo@ejemplo.com">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Rol</label>
+              <select id="uRol" class="select-input" style="width:100%;">
+                <option value="lider">Líder</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Contraseña</label>
+              <input type="password" id="uPassword" class="form-input" placeholder="Mínimo 6 caracteres">
+            </div>
+          </div>
+          <button class="btn-save" onclick="crearUsuario()">Crear usuario</button>
+          <div class="success-msg" id="uOk"></div>
+          <div class="error-msg" id="uErr"></div>
+        </div>
+
+        <div id="usuariosLista">
+          <p style="font-size:13px;color:#888780;">Cargando usuarios...</p>
+        </div>
+      </div>
+
+      <!-- ── Sección: Métricas globales ─────────────────────────────── -->
+      <div class="config-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <p class="config-title" style="margin:0;">Métricas globales</p>
+          <button class="btn-save" style="font-size:13px;padding:8px 16px;" onclick="toggleMetricaForm()">+ Nueva métrica</button>
+        </div>
+        <p class="config-hint" style="margin-top:-8px;">Métricas que el admin define y asigna a proyectos. Sus totales aparecen en el dashboard global.</p>
+
+        <div id="metricaForm">
+          <p style="font-size:14px;font-weight:600;color:#2C2C2A;margin:0 0 14px;" id="metricaFormTitle">Nueva métrica global</p>
+          <input type="hidden" id="metricaEditId">
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Nombre</label>
+              <input type="text" id="mNombre" class="form-input" placeholder="Ej. Horas de capacitación">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Tipo</label>
+              <select id="mTipo" class="select-input" style="width:100%;">
+                <option value="numero">Número</option>
+                <option value="texto">Texto</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Unidad (opcional)</label>
+              <input type="text" id="mUnidad" class="form-input" placeholder="horas, kg, sesiones…">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Descripción (opcional)</label>
+              <input type="text" id="mDescripcion" class="form-input" placeholder="Breve descripción">
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Asignar a proyectos</label>
+            <div class="proyectos-check" id="mProyectosCheck">
+              <span style="font-size:13px;color:#888780;">Cargando proyectos...</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <button class="btn-save" onclick="guardarMetrica()">Guardar</button>
+            <button class="btn-secondary" onclick="cancelarMetricaForm()">Cancelar</button>
+          </div>
+          <div class="success-msg" id="mOk"></div>
+          <div class="error-msg" id="mErr"></div>
+        </div>
+
+        <div id="metricasLista">
+          <p style="font-size:13px;color:#888780;">Cargando métricas...</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 <script>
+/* ── Video ─────────────────────────────────────────────────────── */
 document.getElementById('videoUrl').addEventListener('input', function() {
   const preview = document.getElementById('previewVideo');
   if (this.value.trim()) {
@@ -82,23 +220,207 @@ document.getElementById('videoUrl').addEventListener('input', function() {
 });
 
 async function guardarConfig() {
-  const url = document.getElementById('videoUrl').value.trim();
-  const msg = document.getElementById('successMsg');
-  msg.style.display = 'none';
+  const okEl  = document.getElementById('configOk');
+  const errEl = document.getElementById('configErr');
+  okEl.style.display = errEl.style.display = 'none';
   try {
     const res = await fetch('/api/configuracion', {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ video_url: url }),
+      body: JSON.stringify({
+        video_url:         document.getElementById('videoUrl').value.trim(),
+        video_titulo:      document.getElementById('videoTitulo').value.trim(),
+        video_descripcion: document.getElementById('videoDescripcion').value.trim(),
+      }),
     });
     if (res.ok) {
-      msg.style.display = 'block';
-      setTimeout(() => msg.style.display = 'none', 3000);
+      okEl.style.display = 'block';
+      setTimeout(() => okEl.style.display = 'none', 3000);
+    } else {
+      errEl.textContent = 'Error al guardar.'; errEl.style.display = 'block';
     }
-  } catch {
-    alert('Error al guardar. Intenta de nuevo.');
+  } catch { errEl.textContent = 'Error de conexión.'; errEl.style.display = 'block'; }
+}
+
+/* ── Usuarios ──────────────────────────────────────────────────── */
+async function cargarUsuarios() {
+  const res   = await fetch('/api/usuarios');
+  const lista = await res.json();
+  const el    = document.getElementById('usuariosLista');
+  if (!lista.length) { el.innerHTML = '<p style="font-size:13px;color:#888780;">No hay usuarios registrados.</p>'; return; }
+  el.innerHTML = `<table class="user-table">
+    <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Matrícula</th><th></th></tr></thead>
+    <tbody>${lista.map(u => `
+      <tr>
+        <td>${u.nombre}</td>
+        <td style="color:#888780;">${u.email}</td>
+        <td><span class="badge-rol badge-${u.rol}">${u.rol === 'admin' ? 'Admin' : 'Líder'}</span></td>
+        <td style="color:#888780;">${u.matricula || '—'}</td>
+        <td><button class="btn-danger" style="padding:5px 12px;font-size:12px;" onclick="eliminarUsuario(${u.id},'${u.nombre}')">Eliminar</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+async function crearUsuario() {
+  const okEl  = document.getElementById('uOk');
+  const errEl = document.getElementById('uErr');
+  okEl.style.display = errEl.style.display = 'none';
+  const payload = {
+    nombre:    document.getElementById('uNombre').value.trim(),
+    email:     document.getElementById('uEmail').value.trim(),
+    password:  document.getElementById('uPassword').value,
+    rol:       document.getElementById('uRol').value,
+    matricula: document.getElementById('uMatricula').value.trim(),
+  };
+  try {
+    const res  = await fetch('/api/usuarios', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      okEl.textContent = `Usuario "${data.nombre}" creado correctamente.`;
+      okEl.style.display = 'block';
+      ['uNombre','uEmail','uPassword','uMatricula'].forEach(id => document.getElementById(id).value = '');
+      cargarUsuarios();
+      setTimeout(() => okEl.style.display = 'none', 3000);
+    } else {
+      errEl.textContent = data.error || 'Error al crear usuario.'; errEl.style.display = 'block';
+    }
+  } catch { errEl.textContent = 'Error de conexión.'; errEl.style.display = 'block'; }
+}
+
+async function eliminarUsuario(id, nombre) {
+  if (!confirm(`¿Eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
+  const res = await fetch(`/api/usuarios/${id}`, { method: 'DELETE' });
+  const data = await res.json();
+  if (data.ok) cargarUsuarios();
+  else alert(data.error || 'Error al eliminar.');
+}
+
+/* ── Métricas globales ─────────────────────────────────────────── */
+let _proyectos = [];
+let _metricas  = [];
+
+async function cargarProyectos() {
+  const res = await fetch('/api/proyectos');
+  _proyectos = await res.json();
+}
+
+async function cargarMetricas() {
+  const res = await fetch('/api/metricas-globales');
+  _metricas = await res.json();
+  renderMetricas();
+}
+
+function renderMetricas() {
+  const el = document.getElementById('metricasLista');
+  if (!_metricas.length) {
+    el.innerHTML = '<p style="font-size:13px;color:#888780;">No hay métricas globales definidas.</p>';
+    return;
+  }
+  el.innerHTML = _metricas.map(m => {
+    const proyNombres = m.proyectos_ids
+      .map(id => (_proyectos.find(p => p.id === id) || {}).nombre || `#${id}`)
+      .join(', ') || 'Sin proyectos asignados';
+    return `<div class="metrica-item">
+      <div>
+        <div class="metrica-nombre">${m.nombre}${m.unidad ? ` <span style="font-weight:400;color:#888780;">(${m.unidad})</span>` : ''}</div>
+        <div class="metrica-meta">${m.tipo} · ${proyNombres}</div>
+        ${m.descripcion ? `<div class="metrica-meta" style="margin-top:2px;">${m.descripcion}</div>` : ''}
+      </div>
+      <div class="metrica-actions">
+        <button class="btn-secondary" onclick="editarMetrica(${m.id})">Editar</button>
+        <button class="btn-danger" style="padding:6px 14px;" onclick="eliminarMetrica(${m.id},'${m.nombre}')">Eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleMetricaForm() {
+  const f = document.getElementById('metricaForm');
+  if (f.style.display === 'none' || !f.style.display) {
+    document.getElementById('metricaFormTitle').textContent = 'Nueva métrica global';
+    document.getElementById('metricaEditId').value = '';
+    ['mNombre','mUnidad','mDescripcion'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('mTipo').value = 'numero';
+    renderProyectosCheck([]);
+    f.style.display = 'block';
+  } else {
+    f.style.display = 'none';
   }
 }
+
+function cancelarMetricaForm() {
+  document.getElementById('metricaForm').style.display = 'none';
+}
+
+function renderProyectosCheck(seleccionados) {
+  const c = document.getElementById('mProyectosCheck');
+  c.innerHTML = _proyectos.map(p =>
+    `<label><input type="checkbox" value="${p.id}" ${seleccionados.includes(p.id) ? 'checked' : ''}> ${p.nombre}</label>`
+  ).join('');
+}
+
+function editarMetrica(id) {
+  const m = _metricas.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('metricaFormTitle').textContent = 'Editar métrica global';
+  document.getElementById('metricaEditId').value = m.id;
+  document.getElementById('mNombre').value      = m.nombre;
+  document.getElementById('mTipo').value        = m.tipo;
+  document.getElementById('mUnidad').value      = m.unidad || '';
+  document.getElementById('mDescripcion').value = m.descripcion || '';
+  renderProyectosCheck(m.proyectos_ids || []);
+  document.getElementById('metricaForm').style.display = 'block';
+  document.getElementById('metricaForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function guardarMetrica() {
+  const okEl  = document.getElementById('mOk');
+  const errEl = document.getElementById('mErr');
+  okEl.style.display = errEl.style.display = 'none';
+  const editId = document.getElementById('metricaEditId').value;
+  const proyectosIds = [...document.querySelectorAll('#mProyectosCheck input:checked')].map(cb => parseInt(cb.value));
+  const payload = {
+    nombre:        document.getElementById('mNombre').value.trim(),
+    tipo:          document.getElementById('mTipo').value,
+    unidad:        document.getElementById('mUnidad').value.trim() || null,
+    descripcion:   document.getElementById('mDescripcion').value.trim() || null,
+    proyectos_ids: proyectosIds,
+  };
+  if (!payload.nombre) { errEl.textContent = 'El nombre es requerido.'; errEl.style.display = 'block'; return; }
+  try {
+    const url    = editId ? `/api/metricas-globales/${editId}` : '/api/metricas-globales';
+    const method = editId ? 'PUT' : 'POST';
+    const res    = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    if (res.ok) {
+      okEl.textContent = editId ? 'Métrica actualizada.' : 'Métrica creada.';
+      okEl.style.display = 'block';
+      cancelarMetricaForm();
+      cargarMetricas();
+      setTimeout(() => okEl.style.display = 'none', 2000);
+    } else {
+      const d = await res.json();
+      errEl.textContent = d.error || 'Error al guardar.'; errEl.style.display = 'block';
+    }
+  } catch { errEl.textContent = 'Error de conexión.'; errEl.style.display = 'block'; }
+}
+
+async function eliminarMetrica(id, nombre) {
+  if (!confirm(`¿Eliminar la métrica "${nombre}"? Se perderán todos sus valores.`)) return;
+  const res = await fetch(`/api/metricas-globales/${id}`, { method: 'DELETE' });
+  const d   = await res.json();
+  if (d.ok) cargarMetricas();
+  else alert(d.error || 'Error al eliminar.');
+}
+
+/* ── Init ──────────────────────────────────────────────────────── */
+(async () => {
+  await cargarProyectos();
+  cargarUsuarios();
+  cargarMetricas();
+})();
 </script>
 </body>
 </html>
