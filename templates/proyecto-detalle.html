@@ -13,6 +13,7 @@
   <script>
     const PROYECTO_ID    = {{ proyecto_id }};
     const ES_LIDER_DUENO = {{ 'true' if es_lider_dueno else 'false' }};
+    const PUEDE_EDITAR   = {{ 'true' if puede_editar else 'false' }};
   </script>
 
   <div class="dash">
@@ -25,7 +26,7 @@
           <h1 id="proyectoTitulo">{{ proyecto_nombre }}</h1>
         </div>
         <div class="topbar-right">
-          {% if es_lider_dueno %}
+          {% if puede_editar %}
           <button class="btn-edit" id="btnEditar"
             onclick="window.location.href='/editar-proyecto/{{ proyecto_id }}'">
             <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">

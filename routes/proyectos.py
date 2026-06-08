@@ -20,9 +20,13 @@ def proyecto_detalle_page(proyecto_id):
     es_lider_dueno = (
         current_user.is_authenticated and current_user.id == proyecto.lider_id
     )
+    puede_editar = (
+        current_user.is_authenticated and
+        (current_user.rol == 'admin' or current_user.id == proyecto.lider_id)
+    )
     return render_template('proyecto-detalle.html', active_page='proyectos',
                            proyecto_id=proyecto_id, proyecto_nombre=proyecto.nombre,
-                           es_lider_dueno=es_lider_dueno)
+                           es_lider_dueno=es_lider_dueno, puede_editar=puede_editar)
 
 
 @bp.route('/crear-proyecto')
