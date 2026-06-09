@@ -36,8 +36,8 @@
 
         <div class="video-banner">
           <div class="video-thumb" id="videoThumb">
-            {% if video_url %}
-              <iframe src="{{ video_url }}" frameborder="0"
+            {% if config.video_url %}
+              <iframe src="{{ config.video_url }}" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
               </iframe>

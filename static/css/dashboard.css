@@ -271,21 +271,15 @@ body {
   border-radius: 16px;
   border: 0.5px solid #D3D1C7;
   overflow: hidden;
+  flex-shrink: 0; 
 }
-
 /* padding-top 56.25% = 9/16 → impone proporción 16:9
    independientemente del estiramiento del grid padre   */
 .video-thumb {
   position: relative;
   overflow: hidden;
   background: #D3D1C7;
-  min-height: 180px;
-}
-
-.video-thumb::before {
-  content: '';
-  display: block;
-  padding-top: 56.25%;
+  aspect-ratio: 16 / 9; /* ← Esta es la forma moderna */
 }
 
 .video-thumb iframe {
