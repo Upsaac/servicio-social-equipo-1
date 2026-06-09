@@ -5,10 +5,10 @@
 /* ── Topbar override: h2 en lugar de h1 ── */
 .topbar-left h2 { font-size: 24px; font-weight: 600; color: #185FA5; line-height: 1.2; }
 
-/* ── Layout de 3 columnas ── */
+/* ── Layout 2 columnas fijas ── */
 .calendar-layout {
   display: grid;
-  grid-template-columns: 220px 1fr 280px;
+  grid-template-columns: 220px 1fr;
   gap: 24px;
   height: 100%;
 }
@@ -39,12 +39,12 @@
 
 /* ── Grid del mes ── */
 .calendar-grid-container {
-  background: #fff; border: 0.5px solid #D3D1C7; border-radius: 16px; overflow: hidden;
+  background: #fff; border: 1px solid #D3D1C7; border-radius: 16px; overflow: hidden;
 }
 .cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); background: #fff; border-bottom: 0.5px solid #D3D1C7; }
 .cal-header-row div { padding: 14px 10px; text-align: center; font-size: 12px; font-weight: 600; color: #888780; }
 
-.cal-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: #D3D1C7; gap: 0.5px 1px; }
+.cal-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: #D3D1C7; gap: 1px; }
 .cal-cell { background: #fff; min-height: 90px; padding: 10px; font-size: 13px; color: #2C2C2A; font-weight: 500; display: flex; flex-direction: column; gap: 4px; }
 .cal-cell.inactive { background: #FAFAF7; color: #B4B2A9; }
 
@@ -55,20 +55,48 @@
 .event-green { background: #E1F5EE; color: #1D9E75; }
 .event-red   { background: #FAECE7; color: #D85A30; }
 
-/* ── Panel derecho ── */
-.cal-right-panel { display: flex; flex-direction: column; gap: 20px; }
 .milestones-list { display: flex; flex-direction: column; gap: 12px; }
 .milestone-item { border-bottom: 0.5px solid #F1EFE8; padding-bottom: 12px; }
 .milestone-item h4 { font-size: 13px; font-weight: 600; color: #2C2C2A; margin-bottom: 4px; }
 .milestone-item p  { font-size: 12px; color: #888780; }
 
-.event-details-card {
-  background: #fff; border: 0.5px solid #D3D1C7;
-  border-radius: 14px; padding: 20px;
-  display: flex; flex-direction: column; gap: 12px;
+#eventTooltip {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+  min-width: 180px;
+  max-width: 240px;
+  pointer-events: none;
 }
-.event-details-card h4 { font-size: 14px; font-weight: 600; color: #2C2C2A; }
-.event-details-card p  { font-size: 13px; color: #5F5E5A; line-height: 1.5; }
+
+#eventTooltip .tip-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+}
+
+#eventTooltip .tip-row {
+  font-size: 12px;
+  color: #5F5E5A;
+  margin-bottom: 4px;
+  display: flex;
+  gap: 6px;
+}
+
+#eventTooltip .tip-label {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+#eventTooltip .tip-obs {
+  font-size: 11px;
+  color: #888780;
+  margin-top: 6px;
+  padding-top: 6px;
+  line-height: 1.4;
+}
 
 /* ── Botones de navegación Anterior / Siguiente ── */
 .btn-nav {

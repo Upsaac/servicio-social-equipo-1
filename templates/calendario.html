@@ -45,6 +45,7 @@
               <li style="color:#888780;font-size:13px;">Cargando...</li>
             </ul>
           </div>
+
         </div>
 
         <div class="cal-center-panel">
@@ -57,17 +58,12 @@
           </div>
         </div>
 
-        <div class="cal-right-panel">
-          <h3 class="panel-title">Detalle del evento</h3>
-          <div id="eventDetails" class="event-details-card">
-            <p style="color:#888780;font-size:13px;">Haz clic en un evento del calendario para ver su detalle.</p>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
 </div>
+
+<div id="eventTooltip" style="display:none;position:fixed;z-index:999;"></div>
 
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 <script src="{{ url_for('static', filename='js/calendario.js') }}"></script>

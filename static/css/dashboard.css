@@ -48,23 +48,13 @@ body {
   padding: 24px 20px 20px;
 }
 
-.sb-logo {
-  width: 44px;
-  height: 44px;
-  background: #EF9F27;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
 .sb-logo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3px;
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
 }
 
 .sb-logo-grid span {
@@ -107,12 +97,12 @@ body {
 }
 
 .sb-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(127, 119, 221, 0.2);
   color: #fff;
 }
 
 .sb-item.active {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(127, 119, 221, 0.35);
   color: #fff;
 }
 

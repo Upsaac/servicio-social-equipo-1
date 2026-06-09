@@ -74,7 +74,7 @@ function renderCalendario() {
     const eventos = porFecha[fecha] || [];
     const chips   = eventos.map((a, idx) => {
       const color = COLORES_PROYECTO[a.proyecto_id % COLORES_PROYECTO.length];
-      return `<div class="event-chip" data-actividad='${JSON.stringify(a)}' style="background:${color}22;color:${color};border:1px solid ${color}44;font-size:11px;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;" onclick="mostrarDetalle(this)">${a.tema}</div>`;
+      return `<div class="event-chip" data-actividad='${JSON.stringify(a)}' style="background:${color};color:#fff;font-size:11px;padding:3px 7px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-weight:500;" onmouseenter="mostrarDetalle(event,this)" onmouseleave="cerrarDetalle()">${a.tema}</div>`;
     }).join('');
     html += `<div class="cal-cell"><span style="font-size:12px;font-weight:600;color:#5F5E5A;margin-bottom:4px;">${d}</span>${chips}</div>`;
   }
@@ -100,20 +100,33 @@ function renderProximas() {
   }).join('');
 }
 
-function mostrarDetalle(el) {
-  const a    = JSON.parse(el.dataset.actividad);
-  const card = document.getElementById('eventDetails');
-  if (!card) return;
-  card.style.opacity = '0.5';
-  setTimeout(() => {
-    card.innerHTML = `
-      <p style="font-weight:600;font-size:14px;margin-bottom:8px;">${a.tema}</p>
-      <p style="font-size:13px;color:#5F5E5A;margin-bottom:4px;"><strong>Proyecto:</strong> ${a.proyecto_nombre || '—'}</p>
-      <p style="font-size:13px;color:#5F5E5A;margin-bottom:4px;"><strong>Fecha:</strong> ${a.fecha}</p>
-      ${a.duracion_minutos ? `<p style="font-size:13px;color:#5F5E5A;margin-bottom:4px;"><strong>Duración:</strong> ${a.duracion_minutos} min</p>` : ''}
-      ${a.num_beneficiarios_presentes ? `<p style="font-size:13px;color:#5F5E5A;margin-bottom:4px;"><strong>Asistentes:</strong> ${a.num_beneficiarios_presentes}</p>` : ''}
-      ${a.observaciones ? `<p style="font-size:12px;color:#888780;margin-top:8px;">${a.observaciones}</p>` : ''}
-    `;
-    card.style.opacity = '1';
-  }, 150);
+function mostrarDetalle(e, el) {
+  const a     = JSON.parse(el.dataset.actividad);
+  const color = COLORES_PROYECTO[a.proyecto_id % COLORES_PROYECTO.length];
+  const tip   = document.getElementById('eventTooltip');
+  if (!tip) return;
+
+  tip.innerHTML = `
+    <div class="tip-title" style="color:${color};border-bottom:2px solid ${color};">${a.tema}</div>
+    <div class="tip-row"><span class="tip-label" style="color:${color};">Proyecto</span><span>${a.proyecto_nombre || '—'}</span></div>
+    <div class="tip-row"><span class="tip-label" style="color:${color};">Fecha</span><span>${a.fecha}</span></div>
+    ${a.duracion_minutos ? `<div class="tip-row"><span class="tip-label" style="color:${color};">Duración</span><span>${a.duracion_minutos} min</span></div>` : ''}
+    ${a.num_beneficiarios_presentes ? `<div class="tip-row"><span class="tip-label" style="color:${color};">Asistentes</span><span>${a.num_beneficiarios_presentes}</span></div>` : ''}
+    ${a.observaciones ? `<div class="tip-obs">${a.observaciones}</div>` : ''}
+  `;
+
+  const rect = el.getBoundingClientRect();
+  tip.style.display = 'block';
+
+  /* Posicionar debajo del chip; ajustar si se sale de la pantalla */
+  const tipW = 220;
+  let left = rect.left;
+  if (left + tipW > window.innerWidth - 8) left = window.innerWidth - tipW - 8;
+  tip.style.left = left + 'px';
+  tip.style.top  = (rect.bottom + 6) + 'px';
+}
+
+function cerrarDetalle() {
+  const tip = document.getElementById('eventTooltip');
+  if (tip) tip.style.display = 'none';
 }

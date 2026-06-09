@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         <h3 class="leader-name">${u.nombre}</h3>
         <div class="tags-container">
-          ${u.proyectos.map(p => `<span class="tag tag-blue">${p.nombre}</span>`).join('') || '<span class="tag tag-blue">Sin proyectos activos</span>'}
+          ${u.proyectos.map(p => `<span class="tag tag-orange">${p.nombre}</span>`).join('') || '<span class="tag tag-orange">Sin proyectos activos</span>'}
         </div>
         <div class="leader-stats">
           <div class="stat-col"><span class="stat-lbl">Proyectos<br>Activos</span><span class="stat-val">${u.total_proyectos}</span></div>

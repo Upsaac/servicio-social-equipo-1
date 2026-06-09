@@ -20,26 +20,22 @@
   text-align: center;
   transition: border-color 0.15s, transform 0.15s;
 }
-.leader-card:hover { border-color: #B4B2A9; transform: translateY(-2px); }
+.leader-card:hover { border-color: #0C447C; transform: translateY(-2px); }
 
 /* Avatar placeholder */
 .avatar-box {
   width: 100px; height: 80px;
-  border: 0.5px solid #D3D1C7; border-radius: 12px;
+  border: 0.5px solid #0C447C; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 15px; background: #F1EFE8; position: relative;
+  margin-bottom: 15px; background: #edf6ff; position: relative;
 }
-.avatar-box::before, .avatar-box::after {
-  content: ''; position: absolute; width: 100%; height: 0.5px; background: #D3D1C7;
-}
-.avatar-box::before { transform: rotate(38deg); }
-.avatar-box::after  { transform: rotate(-38deg); }
+
 
 .avatar-circle {
   width: 50px; height: 50px; border-radius: 50%;
-  background: #E6F1FB;
+  background: #cdf5eb;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 600; color: #185FA5; z-index: 1; border: 2px solid #fff;
+  font-weight: 600; color: #0F6E56; z-index: 1; border: 2px solid #0F6E56;
 }
 
 .leader-name { font-size: 16px; font-weight: 600; color: #2C2C2A; margin-bottom: 12px; }
@@ -48,6 +44,7 @@
 .tags-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; min-height: 24px; }
 .tag { font-size: 11px; font-weight: 500; padding: 4px 11px; border-radius: 20px; }
 .tag-blue   { background: #E6F1FB; color: #0C447C; }
+.tag-orange { background: #FEF0D8; color: #C47600; }
 .tag-green  { background: #E1F5EE; color: #0F6E56; }
 .tag-purple { background: #F3E8FF; color: #5a53b0; }
 .tag-yellow { background: #FAEEDA; color: #854F0B; }
