@@ -1,5 +1,21 @@
 /* ── Análisis: Chart.js con datos reales de /api/dashboard ── */
 
+function _descargarCSV(filas, nombreArchivo) {
+  const csv = filas.map(fila =>
+    fila.map(celda => {
+      const s = String(celda == null ? '' : celda);
+      return (s.includes(',') || s.includes('"') || s.includes('\n'))
+        ? '"' + s.replace(/"/g, '""') + '"'
+        : s;
+    }).join(',')
+  ).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = nombreArchivo; a.click();
+  URL.revokeObjectURL(url);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const res  = await fetch('/api/dashboard');
@@ -182,14 +198,54 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
+    /* Exportar reporte global */
+    const btnExportar = document.getElementById('btnExportar');
+    if (btnExportar) {
+      btnExportar.addEventListener('click', () => {
+        const hoy    = new Date().toLocaleDateString('es-MX');
+        const filas  = [];
+
+        filas.push(['Reporte Global — Huella Solidaria']);
+        filas.push(['Fecha de generación', hoy]);
+        filas.push([]);
+        filas.push(['RESUMEN GENERAL']);
+        filas.push(['Proyectos activos',   data.proyectos_activos   || 0]);
+        filas.push(['Total beneficiarios', data.total_beneficiarios || 0]);
+        filas.push(['Total actividades',   data.total_actividades   || 0]);
+        filas.push(['Líderes activos',     data.total_lideres       || 0]);
+        filas.push(['Zonas de intervención', data.zonas_intervencion || 0]);
+        filas.push([]);
+        filas.push(['PROYECTOS']);
+        filas.push(['Nombre','Estado','ODS','Ubicación','Beneficiarios','Meta','Avance (%)','Actividades']);
+
+        (data.proyectos || []).forEach(p => {
+          const odsList = (p.ods || []).map(o => `ODS ${o.numero}`).join(' | ');
+          filas.push([
+            p.nombre       || '',
+            p.estado       || '',
+            odsList,
+            p.ubicacion    || '',
+            p.beneficiarios || 0,
+            p.meta_beneficiarios || '',
+            p.avance_pct   || 0,
+            (p.actividades || []).length,
+          ]);
+        });
+
+        if ((data.metricas_globales || []).some(m => m.tipo === 'numero')) {
+          filas.push([]);
+          filas.push(['MÉTRICAS GLOBALES']);
+          filas.push(['Métrica','Unidad','Total global']);
+          (data.metricas_globales || []).filter(m => m.tipo === 'numero').forEach(m => {
+            filas.push([m.nombre, m.unidad || '', m.total_global ?? '—']);
+          });
+        }
+
+        _descargarCSV(filas, `Reporte_Global_Huella_Solidaria_${hoy.replace(/\//g,'-')}.csv`);
+      });
+    }
+
   } catch (e) {
     console.error('analisis.js', e);
-  }
-
-  const btnExportar = document.getElementById('btnExportar');
-  if (btnExportar) {
-    btnExportar.addEventListener('click', () => {
-      alert('Exportación no disponible en esta versión.');
-    });
   }
 });

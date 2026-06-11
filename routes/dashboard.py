@@ -145,3 +145,49 @@ def api_dashboard():
         'ods_impactados': list(ods_counts.values()),
         'metricas_globales': metricas_globales,
     })
+
+
+@bp.route('/api/buscar')
+def api_buscar():
+    q = request.args.get('q', '').strip()
+    if len(q) < 2:
+        return jsonify({'proyectos': [], 'lideres': [], 'actividades': []})
+
+    term = f'%{q}%'
+
+    proyectos = Proyecto.query.filter(
+        db.or_(
+            Proyecto.nombre.ilike(term),
+            Proyecto.descripcion.ilike(term),
+            Proyecto.ubicacion.ilike(term),
+        )
+    ).limit(6).all()
+
+    lideres = Usuario.query.filter(
+        db.or_(
+            Usuario.nombre.ilike(term),
+            Usuario.email.ilike(term),
+        )
+    ).limit(5).all()
+
+    actividades = Actividad.query.filter(
+        Actividad.tema.ilike(term)
+    ).limit(5).all()
+
+    return jsonify({
+        'proyectos': [
+            {'id': p.id, 'nombre': p.nombre, 'estado': p.estado,
+             'ubicacion': p.ubicacion or ''}
+            for p in proyectos
+        ],
+        'lideres': [
+            {'id': u.id, 'nombre': u.nombre, 'email': u.email}
+            for u in lideres
+        ],
+        'actividades': [
+            {'id': a.id, 'tema': a.tema,
+             'fecha': a.fecha.strftime('%d/%m/%Y') if a.fecha else '',
+             'proyecto_id': a.proyecto_id}
+            for a in actividades
+        ],
+    })

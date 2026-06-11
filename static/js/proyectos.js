@@ -129,3 +129,52 @@ function clearFiltersProyectos() {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active-chip'));
   renderGrid(todosProyectos);
 }
+
+/* ── Exportación CSV de proyectos ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btnExportarReporte');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const hoy   = new Date().toLocaleDateString('es-MX');
+    const lista = todosProyectos.length ? todosProyectos : [];
+    const filas = [];
+
+    filas.push(['Reporte de Proyectos — Huella Solidaria']);
+    filas.push(['Fecha de generación', hoy]);
+    filas.push(['Total de proyectos', lista.length]);
+    filas.push([]);
+    filas.push(['Nombre','Estado','Líder','ODS','Ubicación','Beneficiarios','Meta','Avance (%)','Modalidad','Fecha inicio','Fecha fin']);
+
+    lista.forEach(p => {
+      const odsList = (p.ods || []).map(o => `ODS ${o.numero}`).join(' | ');
+      filas.push([
+        p.nombre            || '',
+        ESTADO_LABEL[p.estado] || p.estado || '',
+        p.lider ? p.lider.nombre : '',
+        odsList,
+        p.ubicacion         || '',
+        p.beneficiarios     || 0,
+        p.meta_beneficiarios || '',
+        p.avance_pct        || 0,
+        p.modalidad         || '',
+        p.fecha_inicio      || '',
+        p.fecha_fin         || '',
+      ]);
+    });
+
+    const csv = filas.map(fila =>
+      fila.map(celda => {
+        const s = String(celda == null ? '' : celda);
+        return (s.includes(',') || s.includes('"') || s.includes('\n'))
+          ? '"' + s.replace(/"/g, '""') + '"'
+          : s;
+      }).join(',')
+    ).join('\r\n');
+
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `Reporte_Proyectos_${hoy.replace(/\//g,'-')}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  });
+});

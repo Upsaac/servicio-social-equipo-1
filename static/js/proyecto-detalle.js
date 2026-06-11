@@ -98,6 +98,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* Métricas KPI */
     renderMetricasKpi(p.campos || [], metGlobales, puedeEditar);
 
+    /* Exportar proyecto */
+    const btnExp = document.getElementById('btnExportarProyecto');
+    if (btnExp) {
+      btnExp.addEventListener('click', () => exportarProyectoCSV(p, metGlobales));
+    }
+
   } catch (e) {
     console.error('proyecto-detalle.js', e);
   }
@@ -375,4 +381,73 @@ async function guardarValorMetrica(id, esGlobal) {
   } else {
     alert('Error al guardar el valor.');
   }
+}
+
+/* ── Exportación CSV del proyecto ── */
+function exportarProyectoCSV(p, metGlobales) {
+  const hoy   = new Date().toLocaleDateString('es-MX');
+  const filas = [];
+
+  filas.push([`Reporte del Proyecto — ${p.nombre || ''}`]);
+  filas.push(['Fecha de generación', hoy]);
+  filas.push([]);
+
+  filas.push(['INFORMACIÓN GENERAL']);
+  filas.push(['Nombre',             p.nombre        || '']);
+  filas.push(['Estado',             ESTADOS_LABEL[p.estado] || p.estado || '']);
+  filas.push(['Líder',              p.lider ? p.lider.nombre : '']);
+  filas.push(['Ubicación',          p.ubicacion     || '']);
+  filas.push(['Modalidad',          p.modalidad     || '']);
+  filas.push(['Fecha inicio',       p.fecha_inicio  || '']);
+  filas.push(['Fecha fin',          p.fecha_fin     || '']);
+  filas.push(['Periodo',            p.periodo_tipo  ? p.periodo_tipo.replace('_',' ') : '']);
+  filas.push(['Meta beneficiarios', p.meta_beneficiarios || '']);
+  filas.push(['Total beneficiarios',p.beneficiarios || 0]);
+  filas.push(['Avance',             `${p.avance_pct || 0}%`]);
+  filas.push(['ODS',                (p.ods || []).map(o => `ODS ${o.numero} ${o.nombre}`).join(' | ')]);
+  filas.push(['Descripción',        p.descripcion   || '']);
+  filas.push([]);
+
+  if ((p.actividades || []).length) {
+    filas.push(['ACTIVIDADES']);
+    filas.push(['Fecha','Tema','Beneficiarios presentes','Duración (min)','Observaciones']);
+    p.actividades.forEach(a => {
+      filas.push([
+        a.fecha                     || '',
+        a.tema                      || '',
+        a.num_beneficiarios_presentes != null ? a.num_beneficiarios_presentes : '',
+        a.duracion_minutos          != null ? a.duracion_minutos          : '',
+        a.observaciones             || '',
+      ]);
+    });
+    filas.push([]);
+  }
+
+  const metricas = [
+    ...(p.campos || []).map(c => ({ nombre: c.nombre, valor: c.valor, unidad: c.unidad || '', tipo: 'Campo personalizado' })),
+    ...(metGlobales || []).map(m => ({ nombre: m.nombre, valor: m.valor, unidad: m.unidad || '', tipo: 'Métrica global' })),
+  ];
+  if (metricas.length) {
+    filas.push(['MÉTRICAS']);
+    filas.push(['Nombre','Valor','Unidad','Tipo']);
+    metricas.forEach(m => {
+      filas.push([m.nombre, m.valor != null ? m.valor : '—', m.unidad, m.tipo]);
+    });
+  }
+
+  const csv = filas.map(fila =>
+    fila.map(celda => {
+      const s = String(celda == null ? '' : celda);
+      return (s.includes(',') || s.includes('"') || s.includes('\n'))
+        ? '"' + s.replace(/"/g, '""') + '"'
+        : s;
+    }).join(',')
+  ).join('\r\n');
+
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const nombre = (p.nombre || 'proyecto').replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ _-]/g, '').trim().replace(/\s+/g, '_');
+  a.href = url; a.download = `Proyecto_${nombre}_${hoy.replace(/\//g,'-')}.csv`; a.click();
+  URL.revokeObjectURL(url);
 }
